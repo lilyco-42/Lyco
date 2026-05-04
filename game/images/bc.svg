@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080">
+  <defs>
+    <linearGradient id="skin" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#c8b898"/>
+      <stop offset="100%" stop-color="#a89878"/>
+    </linearGradient>
+    <linearGradient id="suit" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#5a5a5a"/>
+      <stop offset="100%" stop-color="#4a4a4a"/>
+    </linearGradient>
+  </defs>
+  <ellipse cx="960" cy="1000" rx="120" ry="15" fill="#000" opacity="0.2"/>
+  <!-- Hair -->
+  <ellipse cx="960" cy="245" rx="50" ry="58" fill="#3a3a3a"/>
+  <path d="M910 245 Q920 187 960 185 Q1000 187 1010 245" fill="#3a3a3a"/>
+  <!-- Face -->
+  <ellipse cx="960" cy="255" rx="38" ry="46" fill="url(#skin)"/>
+  <!-- Eyes -->
+  <ellipse cx="947" cy="252" rx="6" ry="3" fill="#3a3a3a"/>
+  <ellipse cx="973" cy="252" rx="6" ry="3" fill="#3a3a3a"/>
+  <!-- Eyebrows -->
+  <path d="M940 244 L952 246" stroke="#3a3a3a" stroke-width="1.5"/>
+  <path d="M968 246 L980 244" stroke="#3a3a3a" stroke-width="1.5"/>
+  <!-- Nose -->
+  <path d="M960 262 L958 270 L962 270" stroke="#8a7a5a" stroke-width="1" fill="none"/>
+  <!-- Mouth -->
+  <path d="M950 280 Q960 283 970 280" stroke="#7a6a5a" stroke-width="1.5" fill="none"/>
+  <!-- Neck -->
+  <rect x="947" y="298" width="26" height="25" fill="url(#skin)"/>
+  <!-- Collar / Tie -->
+  <path d="M928 323 L947 312 L960 328 L973 312 L992 323" fill="#4a4a4a" stroke="#5a5a5a" stroke-width="1"/>
+  <path d="M955 325 L960 345 L965 325" fill="#3a3a3a"/>
+  <!-- Suit body -->
+  <path d="M898 326 L908 318 L960 332 L1012 318 L1022 326 L1022 690 L1005 710 L915 710 L898 690Z" fill="url(#suit)"/>
+  <line x1="960" y1="332" x2="960" y2="700" stroke="#4a4a4a" stroke-width="2"/>
+  <!-- Arms -->
+  <path d="M898 326 Q870 405 870 505 Q870 545 888 565" fill="url(#suit)" stroke="#4a4a4a" stroke-width="1"/>
+  <path d="M1022 326 Q1050 405 1050 505 Q1050 545 1032 565" fill="url(#suit)" stroke="#4a4a4a" stroke-width="1"/>
+  <ellipse cx="885" cy="555" rx="13" ry="18" fill="url(#skin)"/>
+  <ellipse cx="1035" cy="555" rx="13" ry="18" fill="url(#skin)"/>
+  <!-- Pants -->
+  <path d="M912 705 L922 695 L960 695 L998 695 L1008 705 L1018 895 L998 925 L922 925 L902 895Z" fill="url(#suit)"/>
+  <!-- Shoes -->
+  <path d="M902 905 L922 895 L998 895 L1018 905 L1022 940 L1008 950 L912 950 L898 940Z" fill="#3a3a3a"/>
+  <rect x="898" y="940" width="124" height="10" rx="2" fill="#2a2a2a"/>
+</svg>

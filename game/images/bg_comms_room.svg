@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080">
+  <defs>
+    <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1a2028"/>
+      <stop offset="100%" stop-color="#14181e"/>
+    </linearGradient>
+    <radialGradient id="equip_glow" cx="0.3" cy="0.5" r="0.3">
+      <stop offset="0%" stop-color="#44aa88" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#44aa88" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#wall)"/>
+  <!-- Equipment rack left -->
+  <rect x="100" y="150" width="150" height="600" fill="#2a2a34"/>
+  <rect x="110" y="170" width="130" height="80" fill="#1a1a28" rx="2"/>
+  <rect x="110" y="270" width="130" height="80" fill="#1a1a28" rx="2"/>
+  <rect x="110" y="370" width="130" height="80" fill="#1a1a28" rx="2"/>
+  <!-- Rack LEDs -->
+  <circle cx="120" cy="190" r="2" fill="#44ff44" opacity="0.5"/>
+  <circle cx="130" cy="190" r="2" fill="#ffaa44" opacity="0.3"/>
+  <!-- Equipment rack right -->
+  <rect x="1600" y="150" width="200" height="600" fill="#2a2a34"/>
+  <rect x="1610" y="170" width="180" height="80" fill="#1a1a28" rx="2"/>
+  <rect x="1610" y="270" width="180" height="80" fill="#1a1a28" rx="2"/>
+  <rect x="1610" y="370" width="180" height="150" fill="#1a1a28" rx="2"/>
+  <!-- Desk console -->
+  <rect x="500" y="550" width="800" height="30" fill="#2a2a34" rx="2"/>
+  <rect x="520" y="580" width="15" height="200" fill="#2a2a34"/>
+  <rect x="1260" y="580" width="15" height="200" fill="#2a2a34"/>
+  <!-- Monitor on desk -->
+  <rect x="700" y="450" width="180" height="100" fill="#1a1a28" rx="2"/>
+  <rect x="780" y="550" width="20" height="15" fill="#2a2a34"/>
+  <!-- Screen waveform -->
+  <path d="M720 500 Q740 490 760 500 Q780 510 800 500 Q820 490 840 500 Q860 510 870 500" stroke="#44aa88" stroke-width="1.5" fill="none" opacity="0.5"/>
+  <!-- Audio panel -->
+  <rect x="950" y="480" width="120" height="70" fill="#2a2a34" rx="2"/>
+  <circle cx="980" cy="500" r="5" fill="#2a2a34"/>
+  <circle cx="1010" cy="500" r="5" fill="#2a2a34"/>
+  <circle cx="1040" cy="500" r="5" fill="#2a2a34"/>
+  <!-- Chair -->
+  <rect x="800" y="620" width="80" height="80" fill="#2a2a34" rx="5"/>
+  <!-- Jacket on chair -->
+  <rect x="810" y="610" width="60" height="15" fill="#4a4a5a" rx="2"/>
+  <!-- Floor -->
+  <rect y="700" width="1920" height="380" fill="#14181e"/>
+</svg>

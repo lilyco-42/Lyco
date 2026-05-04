@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080">
+  <defs>
+    <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3a3a30"/>
+      <stop offset="100%" stop-color="#2a2a22"/>
+    </linearGradient>
+    <radialGradient id="lamp" cx="0.5" cy="0.15" r="0.6">
+      <stop offset="0%" stop-color="#ccaa66" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#ccaa66" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#wall)"/>
+  <!-- Lamp glow -->
+  <rect width="1920" height="1080" fill="url(#lamp)"/>
+  <!-- World map -->
+  <rect x="100" y="150" width="900" height="500" fill="#4a4a3a" rx="3"/>
+  <rect x="110" y="160" width="880" height="480" fill="#5a5a4a" rx="2"/>
+  <!-- Continents on map (simplified) -->
+  <ellipse cx="450" cy="320" rx="200" ry="150" fill="#7a7a5a" opacity="0.4"/>
+  <ellipse cx="700" cy="300" rx="120" ry="80" fill="#7a7a5a" opacity="0.4"/>
+  <!-- Red pins -->
+  <circle cx="350" cy="280" r="5" fill="#cc3333"/>
+  <circle cx="500" cy="350" r="5" fill="#cc3333"/>
+  <circle cx="420" cy="400" r="5" fill="#cc3333"/>
+  <circle cx="650" cy="310" r="5" fill="#cc3333"/>
+  <circle cx="300" cy="350" r="5" fill="#cc3333"/>
+  <circle cx="550" cy="280" r="5" fill="#cc3333"/>
+  <!-- Desk -->
+  <rect x="1150" y="600" width="600" height="30" fill="#3a3028" rx="2"/>
+  <rect x="1160" y="630" width="15" height="200" fill="#3a3028"/>
+  <rect x="1725" y="630" width="15" height="200" fill="#3a3028"/>
+  <!-- Monitor -->
+  <rect x="1350" y="520" width="200" height="80" fill="#1a1a28" rx="2"/>
+  <rect x="1420" y="600" width="60" height="15" fill="#3a3a3a"/>
+  <!-- Chair silhouette -->
+  <rect x="1300" y="640" width="80" height="100" fill="#2a2a22" rx="5"/>
+  <!-- Water cup -->
+  <rect x="1280" y="575" width="20" height="25" fill="#6a8a7a" opacity="0.4" rx="2"/>
+  <!-- TV on wall -->
+  <rect x="1100" y="200" width="250" height="180" fill="#1a1a22" rx="3"/>
+  <rect x="1100" y="200" width="250" height="180" fill="#334466" opacity="0.15" rx="3"/>
+</svg>

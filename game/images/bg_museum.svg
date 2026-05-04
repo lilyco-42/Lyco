@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080">
+  <defs>
+    <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#5a4a3a"/>
+      <stop offset="100%" stop-color="#3a3024"/>
+    </linearGradient>
+    <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4a4030"/>
+      <stop offset="100%" stop-color="#3a3024"/>
+    </linearGradient>
+    <linearGradient id="ceiling" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2a2218"/>
+      <stop offset="100%" stop-color="#3a3024"/>
+    </linearGradient>
+  </defs>
+  <!-- Ceiling -->
+  <rect width="1920" height="200" fill="#2a2218"/>
+  <!-- Crack in ceiling -->
+  <path d="M800 0 L850 100 L830 150 L860 200" stroke="#1a1410" stroke-width="3" fill="none"/>
+  <!-- Wall -->
+  <rect y="200" width="1920" height="400" fill="url(#wall)"/>
+  <!-- Floor -->
+  <rect y="600" width="1920" height="480" fill="url(#floor)"/>
+  <!-- Columns -->
+  <rect x="150" y="200" width="60" height="500" fill="#4a4030"/>
+  <rect x="1710" y="200" width="60" height="500" fill="#4a4030"/>
+  <!-- Display plinth -->
+  <rect x="800" y="550" width="320" height="50" fill="#4a4030"/>
+  <rect x="810" y="540" width="300" height="10" fill="#5a5040"/>
+  <!-- Items on floor - sewing machine -->
+  <rect x="350" y="570" width="80" height="30" fill="#3a3a3a" rx="3"/>
+  <circle cx="385" cy="565" r="15" fill="#3a3a3a"/>
+  <!-- Books pile -->
+  <rect x="500" y="580" width="60" height="12" fill="#6a4a3a"/>
+  <rect x="505" y="570" width="55" height="10" fill="#7a5a4a"/>
+  <rect x="510" y="560" width="50" height="10" fill="#5a3a2a"/>
+  <!-- Dried plant pot -->
+  <rect x="650" y="570" width="30" height="30" fill="#5a4a3a"/>
+  <line x1="665" y1="570" x2="660" y2="540" stroke="#5a4a3a" stroke-width="2"/>
+  <line x1="665" y1="570" x2="670" y2="545" stroke="#5a4a3a" stroke-width="2"/>
+  <!-- Box (Li Ke's box) -->
+  <rect x="900" y="555" width="120" height="45" fill="#6a5a3a" rx="2"/>
+  <rect x="950" y="545" width="100" height="10" fill="#7a6a4a" rx="2"/>
+  <!-- Ceramic shard -->
+  <polygon points="1200,580 1230,570 1240,585 1215,595" fill="#8a6a4a"/>
+  <!-- Light dust motes -->
+  <circle cx="300" cy="300" r="2" fill="#aaa" opacity="0.1"/>
+  <circle cx="600" cy="250" r="1.5" fill="#aaa" opacity="0.08"/>
+  <circle cx="1000" cy="350" r="2" fill="#aaa" opacity="0.1"/>
+  <circle cx="1400" cy="280" r="1.5" fill="#aaa" opacity="0.08"/>
+</svg>

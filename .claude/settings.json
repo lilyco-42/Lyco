@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(winget install *)",
+      "Bash(node -e ' *)",
+      "Read(//d//**)",
+      "Bash(pip install *)",
+      "Bash(python -c ' *)"
+    ]
+  }
+}

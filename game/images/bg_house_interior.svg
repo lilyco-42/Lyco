@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080">
+  <defs>
+    <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4a3a2a"/>
+      <stop offset="100%" stop-color="#3a2a1a"/>
+    </linearGradient>
+    <radialGradient id="window" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#8a8a7a" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#8a8a7a" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#wall)"/>
+  <!-- Window -->
+  <rect x="100" y="100" width="300" height="400" fill="#2a2a22"/>
+  <rect x="110" y="110" width="280" height="380" fill="#3a3a30"/>
+  <!-- Window glow -->
+  <rect width="1920" height="1080" fill="url(#window)"/>
+  <!-- Curtains -->
+  <rect x="95" y="100" width="20" height="400" fill="#4a3a2a"/>
+  <rect x="385" y="100" width="20" height="400" fill="#4a3a2a"/>
+  <!-- Photo frame on wall -->
+  <rect x="600" y="200" width="100" height="130" fill="#2a1a0a" rx="2"/>
+  <rect x="610" y="210" width="80" height="110" fill="#6a5a3a" rx="1"/>
+  <!-- Table -->
+  <rect x="500" y="550" width="300" height="15" fill="#3a2a1a"/>
+  <rect x="520" y="565" width="10" height="150" fill="#3a2a1a"/>
+  <rect x="770" y="565" width="10" height="150" fill="#3a2a1a"/>
+  <!-- Water glass -->
+  <rect x="630" y="530" width="16" height="20" fill="#6a8a7a" opacity="0.3" rx="2"/>
+  <!-- Note under glass -->
+  <rect x="650" y="535" width="40" height="15" fill="#8a7a5a" opacity="0.5"/>
+  <!-- Bookshelf -->
+  <rect x="1000" y="150" width="200" height="500" fill="#3a2a1a"/>
+  <rect x="1010" y="160" width="180" height="480" fill="#2a1a0a"/>
+  <!-- Shelf lines -->
+  <line x1="1010" y1="260" x2="1190" y2="260" stroke="#4a3a2a" stroke-width="2"/>
+  <line x1="1010" y1="360" x2="1190" y2="360" stroke="#4a3a2a" stroke-width="2"/>
+  <line x1="1010" y1="460" x2="1190" y2="460" stroke="#4a3a2a" stroke-width="2"/>
+  <!-- Books -->
+  <rect x="1020" y="170" width="15" height="90" fill="#6a4a3a"/>
+  <rect x="1040" y="180" width="12" height="80" fill="#5a3a2a"/>
+  <rect x="1060" y="175" width="18" height="85" fill="#7a5a3a"/>
+  <!-- Floor -->
+  <rect y="700" width="1920" height="380" fill="#2a2218"/>
+</svg>

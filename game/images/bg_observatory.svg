@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0a0a20"/>
+      <stop offset="40%" stop-color="#1a1a3a"/>
+      <stop offset="100%" stop-color="#2a2a4a"/>
+    </linearGradient>
+    <linearGradient id="mountain" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2a2a3a"/>
+      <stop offset="100%" stop-color="#1a1a2a"/>
+    </linearGradient>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#sky)"/>
+  <!-- Stars -->
+  <circle cx="200" cy="80" r="1.5" fill="#fff" opacity="0.6"/>
+  <circle cx="500" cy="50" r="1" fill="#fff" opacity="0.4"/>
+  <circle cx="800" cy="120" r="1.5" fill="#fff" opacity="0.5"/>
+  <circle cx="1100" cy="60" r="2" fill="#fff" opacity="0.7"/>
+  <circle cx="1400" cy="90" r="1" fill="#fff" opacity="0.4"/>
+  <circle cx="1700" cy="40" r="1.5" fill="#fff" opacity="0.5"/>
+  <circle cx="350" cy="150" r="1" fill="#fff" opacity="0.3"/>
+  <circle cx="900" cy="180" r="1.2" fill="#fff" opacity="0.4"/>
+  <circle cx="1500" cy="140" r="1" fill="#fff" opacity="0.3"/>
+  <!-- Mountain silhouette -->
+  <path d="M0 600 L200 450 L350 500 L500 380 L650 460 L800 350 L950 420 L1100 300 L1250 380 L1400 330 L1550 400 L1700 360 L1920 480 L1920 600 Z" fill="url(#mountain)"/>
+  <!-- Mountain detail -->
+  <path d="M0 600 L200 450 L350 500 L500 380 L650 460 L800 350 L950 420 L1100 300 L1250 380 L1400 330 L1550 400 L1700 360 L1920 480 L1920 600 Z" fill="#1a1a2a" opacity="0.5"/>
+  <!-- Observatory dome -->
+  <ellipse cx="1100" cy="310" rx="40" ry="30" fill="#3a3a4a"/>
+  <ellipse cx="1100" cy="300" rx="35" ry="20" fill="#4a4a5a"/>
+  <!-- Dome slit -->
+  <line x1="1095" y1="285" x2="1095" y2="320" stroke="#1a1a2a" stroke-width="3"/>
+  <line x1="1105" y1="285" x2="1105" y2="320" stroke="#1a1a2a" stroke-width="3"/>
+  <!-- Ground -->
+  <rect y="600" width="1920" height="480" fill="#1a1a2a"/>
+</svg>

@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2a1a1a"/>
+      <stop offset="40%" stop-color="#4a2a1a"/>
+      <stop offset="70%" stop-color="#8a4a2a"/>
+      <stop offset="100%" stop-color="#6a3a1a"/>
+    </linearGradient>
+    <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3d3529"/>
+      <stop offset="100%" stop-color="#2a2218"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="0.5" cy="0.3" r="0.4">
+      <stop offset="0%" stop-color="#cc5533" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#cc5533" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#sky)"/>
+  <rect y="620" width="1920" height="460" fill="url(#ground)"/>
+  <!-- Red sun glow -->
+  <rect width="1920" height="1080" fill="url(#sun)"/>
+  <!-- Distant hills -->
+  <path d="M0 620 Q200 560 400 600 Q600 550 800 580 Q1000 540 1200 570 Q1400 550 1600 590 Q1800 560 1920 600 L1920 620 L0 620Z" fill="#4a3520" opacity="0.6"/>
+  <!-- Ash particles -->
+  <circle cx="300" cy="200" r="2" fill="#888" opacity="0.3"/>
+  <circle cx="700" cy="150" r="1.5" fill="#888" opacity="0.2"/>
+  <circle cx="1100" cy="300" r="2.5" fill="#888" opacity="0.25"/>
+  <circle cx="1500" cy="180" r="1.8" fill="#888" opacity="0.3"/>
+  <circle cx="500" cy="350" r="1.2" fill="#888" opacity="0.2"/>
+  <circle cx="1300" cy="250" r="2" fill="#888" opacity="0.2"/>
+  <circle cx="800" cy="400" r="1.5" fill="#888" opacity="0.15"/>
+  <circle cx="1700" cy="280" r="2.2" fill="#888" opacity="0.25"/>
+  <circle cx="200" cy="450" r="1" fill="#888" opacity="0.2"/>
+  <circle cx="1000" cy="120" r="1.8" fill="#888" opacity="0.15"/>
+  <!-- Flying birds silhouette -->
+  <path d="M1400 200 Q1410 195 1420 200" stroke="#1a0a0a" stroke-width="1.5" fill="none" opacity="0.4"/>
+  <path d="M1430 190 Q1440 185 1450 190" stroke="#1a0a0a" stroke-width="1.5" fill="none" opacity="0.4"/>
+  <path d="M1380 210 Q1390 205 1400 210" stroke="#1a0a0a" stroke-width="1.5" fill="none" opacity="0.3"/>
+</svg>

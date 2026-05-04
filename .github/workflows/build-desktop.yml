@@ -1,0 +1,54 @@
+name: Build Desktop
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-desktop:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache Ren'Py SDK
+        id: cache-renpy
+        uses: actions/cache@v4
+        with:
+          path: renpy
+          key: renpy-8.5.2
+
+      - name: Download Ren'Py SDK
+        if: steps.cache-renpy.outputs.cache-hit != 'true'
+        run: |
+          curl -sLo renpy.tar.bz2 \
+            https://www.renpy.org/dl/8.5.2/renpy-8.5.2-sdk.tar.bz2
+          tar xjf renpy.tar.bz2
+          mv renpy-8.5.2-sdk renpy
+
+      - name: Build distributions
+        run: |
+          renpy/renpy.sh renpy \
+            distribute "${{ github.workspace }}" \
+            --package pc mac linux win \
+            --destination "${{ github.workspace }}/dists"
+
+      - name: Upload Windows
+        uses: actions/upload-artifact@v4
+        with:
+          name: Lyco-Windows
+          path: dists/*-win.zip
+
+      - name: Upload Linux
+        uses: actions/upload-artifact@v4
+        with:
+          name: Lyco-Linux
+          path: dists/*-linux.tar.bz2
+
+      - name: Upload Mac
+        uses: actions/upload-artifact@v4
+        with:
+          name: Lyco-Mac
+          path: dists/*-mac.zip

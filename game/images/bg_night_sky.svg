@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0a0a14"/>
+      <stop offset="40%" stop-color="#0e0e1a"/>
+      <stop offset="100%" stop-color="#1a1a2e"/>
+    </linearGradient>
+    <radialGradient id="moon_glow" cx="0.8" cy="0.2" r="0.15">
+      <stop offset="0%" stop-color="#aaaaaa" stop-opacity="0.06"/>
+      <stop offset="100%" stop-color="#aaaaaa" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#sky)"/>
+  <!-- Moon glow -->
+  <rect width="1920" height="1080" fill="url(#moon_glow)"/>
+  <!-- Moon crescent -->
+  <circle cx="1500" cy="200" r="30" fill="#ccc" opacity="0.15"/>
+  <circle cx="1515" cy="190" r="27" fill="#0a0a14"/>
+  <!-- Ash clouds -->
+  <ellipse cx="400" cy="150" rx="300" ry="20" fill="#1a1a2e" opacity="0.4"/>
+  <ellipse cx="800" cy="100" rx="400" ry="15" fill="#1a1a2e" opacity="0.3"/>
+  <ellipse cx="1200" cy="180" rx="250" ry="12" fill="#1a1a2e" opacity="0.35"/>
+  <ellipse cx="100" cy="250" rx="350" ry="18" fill="#1a1a2e" opacity="0.25"/>
+  <ellipse cx="1700" cy="120" rx="200" ry="10" fill="#1a1a2e" opacity="0.3"/>
+  <!-- Stars visible through gaps -->
+  <circle cx="200" cy="80" r="2" fill="#fff" opacity="0.7"/>
+  <circle cx="500" cy="50" r="1.5" fill="#fff" opacity="0.5"/>
+  <circle cx="900" cy="120" r="2.5" fill="#fff" opacity="0.8"/>
+  <circle cx="1300" cy="60" r="1.5" fill="#fff" opacity="0.5"/>
+  <circle cx="1700" cy="80" r="2" fill="#fff" opacity="0.6"/>
+  <circle cx="350" cy="180" r="1.5" fill="#fff" opacity="0.4"/>
+  <circle cx="700" cy="200" r="1" fill="#fff" opacity="0.3"/>
+  <circle cx="1100" cy="150" r="1.5" fill="#fff" opacity="0.5"/>
+  <circle cx="1600" cy="160" r="1" fill="#fff" opacity="0.3"/>
+  <circle cx="300" cy="300" r="1.2" fill="#fff" opacity="0.3"/>
+  <circle cx="1000" cy="280" r="1" fill="#fff" opacity="0.25"/>
+  <circle cx="1400" cy="300" r="1.5" fill="#fff" opacity="0.35"/>
+  <!-- Ground silhouette -->
+  <path d="M0 800 Q200 780 400 790 Q600 770 800 785 Q1000 760 1200 780 Q1400 770 1600 790 Q1800 775 1920 800 L1920 1080 L0 1080Z" fill="#0a0a14" opacity="0.6"/>
+  <!-- Ground -->
+  <rect y="800" width="1920" height="280" fill="#0a0a14"/>
+</svg>

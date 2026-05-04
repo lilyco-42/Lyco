@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080">
+  <defs>
+    <linearGradient id="skin" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#b8a888"/>
+      <stop offset="100%" stop-color="#9a8a6a"/>
+    </linearGradient>
+    <linearGradient id="coat" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#5a5a4a"/>
+      <stop offset="100%" stop-color="#4a4a3a"/>
+    </linearGradient>
+    <linearGradient id="pants" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3a3a2a"/>
+      <stop offset="100%" stop-color="#2a2a1a"/>
+    </linearGradient>
+  </defs>
+  <ellipse cx="960" cy="1000" rx="125" ry="16" fill="#000" opacity="0.2"/>
+  <!-- Hair -->
+  <ellipse cx="960" cy="252" rx="50" ry="55" fill="#5a5a5a"/>
+  <path d="M910 252 Q920 207 960 205 Q1000 207 1010 252" fill="#5a5a5a"/>
+  <ellipse cx="960" cy="232" rx="30" ry="20" fill="#7a7a6a"/>
+  <!-- Face (slightly raised) -->
+  <ellipse cx="960" cy="262" rx="42" ry="50" fill="url(#skin)"/>
+  <!-- Eyes (wide, emotional) -->
+  <ellipse cx="945" cy="258" rx="7" ry="4" fill="#3a3a3a"/>
+  <ellipse cx="975" cy="258" rx="7" ry="4" fill="#3a3a3a"/>
+  <!-- Eyebrows (raised) -->
+  <path d="M933 247 L952 251" stroke="#5a5a4a" stroke-width="2"/>
+  <path d="M968 251 L987 247" stroke="#5a5a4a" stroke-width="2"/>
+  <!-- Glasses -->
+  <ellipse cx="945" cy="258" rx="14" ry="10" fill="none" stroke="#7a7a6a" stroke-width="1.5"/>
+  <ellipse cx="975" cy="258" rx="14" ry="10" fill="none" stroke="#7a7a6a" stroke-width="1.5"/>
+  <line x1="959" y1="258" x2="961" y2="258" stroke="#7a7a6a" stroke-width="1.5"/>
+  <line x1="931" y1="256" x2="920" y2="254" stroke="#7a7a6a" stroke-width="1.5"/>
+  <line x1="989" y1="256" x2="1000" y2="254" stroke="#7a7a6a" stroke-width="1.5"/>
+  <!-- Nose -->
+  <path d="M960 270 L957 280 L963 280" stroke="#8a7a5a" stroke-width="1" fill="none"/>
+  <!-- Mouth (open, emotional) -->
+  <ellipse cx="960" cy="292" rx="8" ry="5" fill="#5a4a3a"/>
+  <!-- Neck -->
+  <rect x="943" y="308" width="34" height="28" fill="url(#skin)"/>
+  <!-- Collar -->
+  <path d="M915 336 L943 318 L960 341 L977 318 L1005 336" fill="#555" stroke="#666" stroke-width="1"/>
+  <!-- Coat body -->
+  <path d="M885 339 L895 329 L960 344 L1025 329 L1035 339 L1035 696 L1015 716 L905 716 L885 696Z" fill="url(#coat)"/>
+  <line x1="960" y1="344" x2="960" y2="696" stroke="#4a4a3a" stroke-width="2"/>
+  <!-- Left arm at side -->
+  <path d="M885 339 Q850 416 850 516 Q850 556 875 576" fill="url(#coat)" stroke="#555" stroke-width="1"/>
+  <ellipse cx="870" cy="566" rx="15" ry="20" fill="url(#skin)"/>
+  <!-- Right arm raised, hand gesturing -->
+  <path d="M1035 339 Q1080 380 1090 430 Q1095 450 1085 460" fill="url(#coat)" stroke="#555" stroke-width="1"/>
+  <ellipse cx="1085" cy="460" rx="14" ry="16" fill="url(#skin)"/>
+  <path d="M1075 450 L1080 440" stroke="#8a7a5a" stroke-width="2" fill="none"/>
+  <path d="M1095 450 L1088 440" stroke="#8a7a5a" stroke-width="2" fill="none"/>
+  <!-- Cane leaning against body -->
+  <line x1="1035" y1="600" x2="1060" y2="750" stroke="#5a4a3a" stroke-width="3"/>
+  <ellipse cx="1060" cy="750" rx="5" ry="3" fill="#5a4a3a"/>
+  <!-- Pants -->
+  <path d="M905 706 L915 696 L960 696 L1005 696 L1015 706 L1025 896 L1005 926 L915 926 L895 896Z" fill="url(#pants)"/>
+  <!-- Boots -->
+  <path d="M895 906 L915 896 L1005 896 L1025 906 L1030 946 L1015 956 L905 956 L890 946Z" fill="#3a3a2a"/>
+  <rect x="890" y="946" width="140" height="12" rx="3" fill="#2a2a1a"/>
+</svg>

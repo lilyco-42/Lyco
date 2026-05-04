@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3a3028"/>
+      <stop offset="50%" stop-color="#5a4a3a"/>
+      <stop offset="100%" stop-color="#6a5040"/>
+    </linearGradient>
+    <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4a4030"/>
+      <stop offset="100%" stop-color="#3a3020"/>
+    </linearGradient>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#sky)"/>
+  <rect y="700" width="1920" height="380" fill="url(#ground)"/>
+  <!-- Building -->
+  <rect x="750" y="450" width="300" height="250" fill="#4a4a44"/>
+  <rect x="740" y="440" width="320" height="15" fill="#5a5a54"/>
+  <!-- Windows -->
+  <rect x="770" y="480" width="40" height="50" fill="#2a2a24" opacity="0.7"/>
+  <rect x="830" y="480" width="40" height="50" fill="#2a2a24" opacity="0.7"/>
+  <rect x="890" y="480" width="40" height="50" fill="#2a2a24" opacity="0.7"/>
+  <rect x="950" y="480" width="40" height="50" fill="#2a2a24" opacity="0.7"/>
+  <rect x="770" y="560" width="40" height="50" fill="#2a2a24" opacity="0.5"/>
+  <rect x="830" y="560" width="40" height="50" fill="#2a2a24" opacity="0.5"/>
+  <rect x="890" y="560" width="40" height="50" fill="#2a2a24" opacity="0.5"/>
+  <rect x="950" y="560" width="40" height="50" fill="#2a2a24" opacity="0.5"/>
+  <!-- Door -->
+  <rect x="870" y="620" width="60" height="80" fill="#2a2a24"/>
+  <!-- Sign -->
+  <rect x="810" y="425" width="180" height="20" fill="#6a5a4a" rx="2"/>
+  <!-- Antenna on roof -->
+  <line x1="900" y1="440" x2="900" y2="390" stroke="#6a6a5a" stroke-width="2"/>
+  <line x1="890" y1="400" x2="910" y2="400" stroke="#6a6a5a" stroke-width="1.5"/>
+  <!-- Ash haze -->
+  <rect width="1920" height="1080" fill="#888" opacity="0.08"/>
+</svg>

@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080">
+  <defs>
+    <linearGradient id="skin" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#a89878"/>
+      <stop offset="100%" stop-color="#8a7a5a"/>
+    </linearGradient>
+    <linearGradient id="jacket" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#6a6a6a"/>
+      <stop offset="100%" stop-color="#4a4a4a"/>
+    </linearGradient>
+    <linearGradient id="pants" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4a4a4a"/>
+      <stop offset="100%" stop-color="#3a3a3a"/>
+    </linearGradient>
+  </defs>
+  <ellipse cx="960" cy="1005" rx="140" ry="18" fill="#000" opacity="0.25"/>
+  <!-- Hair -->
+  <ellipse cx="958" cy="270" rx="50" ry="55" fill="#3a3a3a"/>
+  <path d="M908 270 Q918 220 958 218 Q998 220 1008 270" fill="#3a3a3a"/>
+  <!-- Face (head down) -->
+  <ellipse cx="958" cy="282" rx="45" ry="48" fill="url(#skin)"/>
+  <!-- Eyes (closed) -->
+  <path d="M938 280 L952 282" stroke="#3a3a3a" stroke-width="1.5"/>
+  <path d="M964 282 L978 280" stroke="#3a3a3a" stroke-width="1.5"/>
+  <!-- Eyebrows -->
+  <path d="M935 272 L950 275" stroke="#4a4a3a" stroke-width="1.5"/>
+  <path d="M966 275 L981 272" stroke="#4a4a3a" stroke-width="1.5"/>
+  <!-- Nose -->
+  <path d="M958 288 L955 298 L961 298" stroke="#8a7a5a" stroke-width="1.5" fill="none"/>
+  <!-- Mouth -->
+  <path d="M950 305 Q958 303 966 305" stroke="#7a6a5a" stroke-width="1.5" fill="none"/>
+  <!-- Neck -->
+  <rect x="940" y="325" width="36" height="28" fill="url(#skin)"/>
+  <!-- Collar -->
+  <path d="M908 353 L940 333 L958 356 L976 333 L1008 353" fill="#555" stroke="#666" stroke-width="1"/>
+  <!-- Jacket body (hunched) -->
+  <path d="M878 358 L890 348 L958 361 L1026 348 L1038 358 L1038 710 L1018 730 L898 730 L878 710Z" fill="url(#jacket)"/>
+  <line x1="958" y1="361" x2="958" y2="710" stroke="#555" stroke-width="2"/>
+  <!-- Arms hanging -->
+  <path d="M878 358 Q835 450 835 550 Q835 590 865 610" fill="url(#jacket)" stroke="#555" stroke-width="1"/>
+  <path d="M1038 358 Q1081 450 1081 550 Q1081 590 1051 610" fill="url(#jacket)" stroke="#555" stroke-width="1"/>
+  <ellipse cx="860" cy="600" rx="16" ry="20" fill="url(#skin)"/>
+  <ellipse cx="1055" cy="600" rx="16" ry="20" fill="url(#skin)"/>
+  <!-- Pants -->
+  <path d="M898 720 L910 710 L958 710 L1006 710 L1018 720 L1028 905 L1008 935 L908 935 L888 905Z" fill="url(#pants)"/>
+  <!-- Boots -->
+  <path d="M888 915 L910 905 L1006 905 L1028 915 L1033 955 L1018 965 L898 965 L883 955Z" fill="#3a3a3a"/>
+  <rect x="883" y="955" width="150" height="12" rx="3" fill="#2a2a2a"/>
+</svg>

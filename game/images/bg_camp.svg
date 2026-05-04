@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1a1a22"/>
+      <stop offset="100%" stop-color="#2a2a3a"/>
+    </linearGradient>
+    <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3a3028"/>
+      <stop offset="100%" stop-color="#2a2218"/>
+    </linearGradient>
+    <radialGradient id="lamp" cx="0.5" cy="0.35" r="0.3">
+      <stop offset="0%" stop-color="#ffcc66" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#ffcc66" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#sky)"/>
+  <!-- Gas station canopy -->
+  <rect x="600" y="100" width="700" height="20" fill="#4a4a44"/>
+  <rect x="610" y="120" width="15" height="300" fill="#4a4a44"/>
+  <rect x="1280" y="120" width="15" height="300" fill="#4a4a44"/>
+  <!-- Canopy roof -->
+  <polygon points="580,100 650,40 1250,40 1320,100" fill="#3a3a34"/>
+  <!-- Lamp under canopy -->
+  <rect x="940" y="120" width="20" height="30" fill="#6a6a5a"/>
+  <ellipse cx="950" cy="155" rx="8" ry="5" fill="#ffcc44" opacity="0.6"/>
+  <!-- Lamp glow -->
+  <rect width="1920" height="1080" fill="url(#lamp)"/>
+  <!-- Gas pumps -->
+  <rect x="750" y="350" width="60" height="120" fill="#4a4a44" rx="3"/>
+  <rect x="1090" y="350" width="60" height="120" fill="#4a4a44" rx="3"/>
+  <!-- Ground -->
+  <rect y="420" width="1920" height="660" fill="url(#ground)"/>
+  <!-- People silhouettes -->
+  <ellipse cx="600" cy="500" rx="20" ry="30" fill="#1a1a14" opacity="0.5"/>
+  <ellipse cx="650" cy="510" rx="15" ry="25" fill="#1a1a14" opacity="0.4"/>
+  <ellipse cx="1300" cy="490" rx="18" ry="28" fill="#1a1a14" opacity="0.4"/>
+  <!-- Sleeping bags -->
+  <ellipse cx="500" cy="600" rx="40" ry="15" fill="#3a3a30" opacity="0.5"/>
+  <ellipse cx="450" cy="630" rx="35" ry="12" fill="#3a3a30" opacity="0.4"/>
+</svg>

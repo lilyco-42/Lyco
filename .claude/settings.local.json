@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__context7__query-docs",
+      "mcp__context7__resolve-library-id",
+      "WebSearch",
+      "WebFetch(domain:www.renpy.org)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" \"https://a931e157612e4707947cb969965ecd6c--7860.ap-shanghai2.cloudstudio.club/sdapi/v1/txt2img\")",
+      "Bash(curl -s -X POST \"https://a931e157612e4707947cb969965ecd6c--7860.ap-shanghai2.cloudstudio.club/sdapi/v1/txt2img\" -H \"Content-Type: application/json\" -d '{\"prompt\":\"test\",\"steps\":10,\"width\":512,\"height\":512}' -o /dev/null -w \"HTTP %{http_code}, Size: %{size_download} bytes\\\\n\")",
+      "Bash(cmd //c \"\\\\\"C:\\\\Program Files\\\\LibreOffice\\\\program\\\\soffice.exe\\\\\" --headless --convert-to pdf \\\\\"Lyco_序章路线规划.pptx\\\\\"\")",
+      "Bash(curl -s \"https://a931e157612e4707947cb969965ecd6c--7860.ap-shanghai2.cloudstudio.club/sdapi/v1/sd-models\")",
+      "Bash(cmd //c \"C:\\\\Program Files\\\\LibreOffice\\\\program\\\\soffice.exe --headless --convert-to pdf Lyco_序章路线规划.pptx\")",
+      "Bash(cmd //c \"C:\\\\PROGRA~1\\\\LIBREOFFICE\\\\program\\\\soffice.exe --headless --convert-to pdf Lyco_序章路线规划.pptx\")",
+      "Bash(node -e ' *)",
+      "Bash(curl -s -m 10 \"https://a931e157612e4707947cb969965ecd6c--7860.ap-shanghai2.cloudstudio.club/sdapi/v1/progress\")",
+      "Bash(python tools/generate_8bit_sounds.py)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(f'job: {d[\\\\\"state\\\\\"][\\\\\"job\\\\\"]}, progress: {d[\\\\\"progress\\\\\"]}, step: {d[\\\\\"state\\\\\"][\\\\\"sampling_step\\\\\"]}'\\)\")",
+      "Bash(curl -s -m 60 -X POST https://a931e157612e4707947cb969965ecd6c--7860.ap-shanghai2.cloudstudio.club/sdapi/v1/txt2img -H 'Content-Type: application/json' -d '{\"prompt\":\"test\",\"steps\":10,\"width\":512,\"height\":512,\"cfg_scale\":3.5,\"sampler_name\":\"euler\",\"batch_size\":1,\"negative_prompt\":\"\",\"seed\":-1}' -o /dev/null -w 'HTTP %{http_code}, %{time_total}s, %{size_download} bytes\\\\n')",
+      "Bash(python3 -c ' *)",
+      "Read(//c/Program Files/**)",
+      "Read(//c/Program Files \\(x86\\)/**)",
+      "Bash(renpy --help)"
+    ]
+  }
+}

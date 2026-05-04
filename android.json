@@ -1,0 +1,24 @@
+{
+    "expansion": false,
+    "google_play_key": null,
+    "google_play_salt": null,
+    "heap_size": null,
+    "icon_name": "Lyco",
+    "include_pil": false,
+    "include_sqlite": false,
+    "layout": null,
+    "name": "Lyco",
+    "numeric_version": 1,
+    "orientation": "sensorLandscape",
+    "package": "com.lyco.game",
+    "permissions": [
+        "VIBRATE"
+    ],
+    "randomize_keys": false,
+    "source": false,
+    "store": "google",
+    "update_always": true,
+    "update_icons": true,
+    "update_keystores": false,
+    "version": "1.0"
+}

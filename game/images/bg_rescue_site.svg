@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2a2a22"/>
+      <stop offset="60%" stop-color="#4a3a2a"/>
+      <stop offset="100%" stop-color="#5a4a3a"/>
+    </linearGradient>
+    <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3a3028"/>
+      <stop offset="100%" stop-color="#2a2218"/>
+    </linearGradient>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#sky)"/>
+  <!-- Rubble pile left -->
+  <polygon points="0,600 100,450 200,470 300,550 400,600" fill="#3a3028"/>
+  <polygon points="0,600 150,480 250,500 350,600" fill="#4a3a2a" opacity="0.6"/>
+  <!-- Rubble pile right -->
+  <polygon points="1400,600 1500,420 1600,440 1700,500 1920,600" fill="#3a3028"/>
+  <polygon points="1450,600 1550,450 1650,470 1750,600" fill="#4a3a2a" opacity="0.6"/>
+  <!-- Collapsed building center -->
+  <polygon points="600,600 700,350 800,370 900,400 1000,600" fill="#2a2a22"/>
+  <polygon points="650,600 750,380 850,400 950,600" fill="#3a3028" opacity="0.5"/>
+  <!-- Slanted slab -->
+  <polygon points="750,350 850,370 820,500 720,480" fill="#4a4438"/>
+  <!-- Exposed rebar -->
+  <line x1="720" y1="480" x2="700" y2="450" stroke="#5a5a5a" stroke-width="2"/>
+  <line x1="740" y1="485" x2="725" y2="455" stroke="#5a5a5a" stroke-width="2"/>
+  <line x1="820" y1="500" x2="840" y2="470" stroke="#5a5a5a" stroke-width="2"/>
+  <!-- Ground -->
+  <rect y="600" width="1920" height="480" fill="url(#ground)"/>
+  <!-- Ash haze -->
+  <rect width="1920" height="1080" fill="#aaa" opacity="0.05"/>
+</svg>

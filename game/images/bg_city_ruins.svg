@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1a1a14"/>
+      <stop offset="40%" stop-color="#3a2a1a"/>
+      <stop offset="100%" stop-color="#5a3a2a"/>
+    </linearGradient>
+    <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2a2a22"/>
+      <stop offset="100%" stop-color="#1a1a14"/>
+    </linearGradient>
+    <radialGradient id="fire1" cx="0.3" cy="0.5" r="0.15">
+      <stop offset="0%" stop-color="#ff6633" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#ff6633" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="fire2" cx="0.7" cy="0.45" r="0.12">
+      <stop offset="0%" stop-color="#ff5533" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#ff5533" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#sky)"/>
+  <!-- Fire glows -->
+  <rect width="1920" height="1080" fill="url(#fire1)"/>
+  <rect width="1920" height="1080" fill="url(#fire2)"/>
+  <!-- Destroyed buildings silhouette row 1 -->
+  <polygon points="0,600 80,350 160,600" fill="#1a1a14"/>
+  <polygon points="140,600 200,300 260,320 300,600" fill="#1a1a14"/>
+  <polygon points="250,600 320,280 400,310 420,600" fill="#2a1a14"/>
+  <polygon points="380,600 450,250 500,270 520,600" fill="#1a1a14"/>
+  <polygon points="500,600 560,400 620,600" fill="#2a1a14"/>
+  <polygon points="580,600 650,220 720,250 760,600" fill="#1a1a14"/>
+  <polygon points="720,600 780,350 840,600" fill="#2a1a14"/>
+  <!-- Destroyed buildings row 2 -->
+  <polygon points="800,600 880,200 950,230 980,600" fill="#1a1a14" opacity="0.8"/>
+  <polygon points="930,600 1000,280 1080,300 1100,600" fill="#2a1a14" opacity="0.8"/>
+  <polygon points="1050,600 1120,180 1200,210 1220,600" fill="#1a1a14" opacity="0.8"/>
+  <polygon points="1180,600 1250,320 1320,340 1350,600" fill="#2a1a14" opacity="0.8"/>
+  <polygon points="1300,600 1380,250 1450,280 1480,600" fill="#1a1a14" opacity="0.8"/>
+  <!-- Ground -->
+  <rect y="600" width="1920" height="480" fill="url(#ground)"/>
+  <!-- Rubble details -->
+  <polygon points="100,620 150,610 180,630 130,640" fill="#3a2a1a" opacity="0.5"/>
+  <polygon points="500,630 560,615 590,635 530,650" fill="#3a2a1a" opacity="0.5"/>
+  <polygon points="1000,625 1060,610 1090,630 1030,645" fill="#3a2a1a" opacity="0.5"/>
+  <!-- Ash particles -->
+  <circle cx="200" cy="150" r="2" fill="#888" opacity="0.2"/>
+  <circle cx="600" cy="200" r="1.5" fill="#888" opacity="0.15"/>
+  <circle cx="1000" cy="120" r="2" fill="#888" opacity="0.2"/>
+  <circle cx="1400" cy="180" r="1.8" fill="#888" opacity="0.15"/>
+  <circle cx="350" cy="300" r="1.2" fill="#888" opacity="0.12"/>
+  <circle cx="850" cy="250" r="1.5" fill="#888" opacity="0.15"/>
+  <circle cx="1200" cy="350" r="2" fill="#888" opacity="0.1"/>
+  <circle cx="1600" cy="220" r="1.5" fill="#888" opacity="0.12"/>
+</svg>

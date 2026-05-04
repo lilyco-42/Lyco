@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3a3a30"/>
+      <stop offset="50%" stop-color="#4a4a3a"/>
+      <stop offset="100%" stop-color="#5a5a4a"/>
+    </linearGradient>
+    <linearGradient id="road" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#5a5040"/>
+      <stop offset="50%" stop-color="#4a4438"/>
+      <stop offset="100%" stop-color="#5a5040"/>
+    </linearGradient>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#sky)"/>
+  <!-- Road -->
+  <polygon points="0,600 1920,600 1920,680 0,680" fill="url(#road)"/>
+  <!-- Road shoulders -->
+  <rect y="590" width="1920" height="10" fill="#4a4438"/>
+  <rect y="680" width="1920" height="10" fill="#4a4438"/>
+  <!-- Road dash -->
+  <line x1="0" y1="640" x2="1920" y2="640" stroke="#6a6a5a" stroke-width="2" stroke-dasharray="80,60"/>
+  <!-- Ground -->
+  <rect y="690" width="1920" height="390" fill="#4a4030"/>
+  <!-- Distant hills -->
+  <path d="M0 500 Q400 450 800 480 Q1200 440 1600 470 Q1800 460 1920 490 L1920 590 L0 590Z" fill="#4a4a3a" opacity="0.5"/>
+  <!-- Ash particles -->
+  <circle cx="300" cy="200" r="2" fill="#888" opacity="0.1"/>
+  <circle cx="800" cy="150" r="1.5" fill="#888" opacity="0.08"/>
+  <circle cx="1300" cy="250" r="2" fill="#888" opacity="0.1"/>
+  <circle cx="500" cy="350" r="1.2" fill="#888" opacity="0.06"/>
+</svg>

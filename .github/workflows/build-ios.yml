@@ -1,0 +1,69 @@
+name: Build iOS
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-ios:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache Ren'Py SDK
+        id: cache-renpy
+        uses: actions/cache@v4
+        with:
+          path: |
+            renpy
+            renios
+          key: renpy-8.5.2-sdkarm
+
+      - name: Download Ren'Py SDK
+        if: steps.cache-renpy.outputs.cache-hit != 'true'
+        run: |
+          curl -sLo renpy.tar.bz2 \
+            https://www.renpy.org/dl/8.5.2/renpy-8.5.2-sdkarm.tar.bz2
+          tar xjf renpy.tar.bz2
+          mv renpy-8.5.2-sdkarm renpy
+
+      - name: Download renios
+        if: steps.cache-renpy.outputs.cache-hit != 'true'
+        run: |
+          curl -sLo renios.zip \
+            https://www.renpy.org/dl/8.5.2/renpy-8.5.2-renios.zip
+          unzip renios.zip -d renpy/
+
+      - name: Create Xcode project
+        run: |
+          renpy/renpy.sh renpy \
+            ios_create "${{ github.workspace }}" \
+            "${{ github.workspace }}/build/ios"
+
+      - name: Build with Xcode
+        run: |
+          cd "${{ github.workspace }}/build/ios"
+          xcodebuild \
+            -workspace renpy.xcworkspace \
+            -scheme renpy \
+            -configuration Release \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            -derivedDataPath "${{ github.workspace }}/build/derived"
+
+      - name: Package IPA
+        run: |
+          mkdir -p Payload
+          cp -r \
+            "${{ github.workspace }}/build/derived/Build/Products/Release-iphoneos/renpy.app" \
+            Payload/
+          zip -r Lyco-iOS.ipa Payload/
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Lyco-iOS
+          path: Lyco-iOS.ipa
