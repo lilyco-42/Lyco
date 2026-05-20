@@ -18,6 +18,7 @@ struct App {
 
     p2p_port: u16,
     server_receiver: Option<mpsc::Receiver<(P2pStream, String)>>,
+    #[allow(dead_code)]
     server_stop: Option<StopHandle>,
     peers: HashMap<String, P2pStream>,
     rooms: HashMap<String, Vec<Message>>,
@@ -47,16 +48,11 @@ impl App {
 
     fn drain_peer_messages(&mut self) {
         for (_ip, peer) in self.peers.iter_mut() {
-            loop {
-                match peer.recv() {
-                    Ok(msg) => {
-                        self.rooms
-                            .entry(msg.room.clone())
-                            .or_default()
-                            .push(msg);
-                    }
-                    Err(_) => break,
-                }
+            while let Ok(msg) = peer.recv() {
+                self.rooms
+                    .entry(msg.room.clone())
+                    .or_default()
+                    .push(msg);
             }
         }
     }

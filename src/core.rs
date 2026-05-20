@@ -57,8 +57,9 @@ pub fn parse_cidr(cidr: &str) -> Result<Vec<Ipv4Addr>, String> {
 // ── Scan Types ─────────────────────────────────────────────────────
 
 #[derive(Debug, Clone)]
+#[allow(dead_code)]
 pub enum ScanResult {
-    HostAlive { ip: String, hostname: Option<String> },
+    HostAlive { ip: String, #[allow(dead_code)] hostname: Option<String> },
     PortOpen { ip: String, port: u16, service: String },
     SshSuccess { ip: String },
     ScanError { ip: String, error: String },
@@ -131,7 +132,7 @@ pub fn start_scan(config: ScanConfig) -> (mpsc::Receiver<ScanResult>, StopHandle
         }
     };
 
-    let chunk_size = (ips.len() + config.thread_count - 1) / config.thread_count;
+    let chunk_size = ips.len().div_ceil(config.thread_count);
     let chunks: Vec<Vec<Ipv4Addr>> = ips
         .chunks(chunk_size.max(1))
         .map(|c| c.to_vec())
@@ -301,6 +302,7 @@ pub struct Message {
 }
 
 impl Message {
+    #[allow(dead_code)]
     pub fn compute_hash(&self) -> String {
         let json = serde_json::to_string(self).unwrap_or_default();
         let mut hasher = Sha256::new();
@@ -309,6 +311,7 @@ impl Message {
     }
 }
 
+#[allow(dead_code)]
 pub fn verify_chain(messages: &[Message]) -> bool {
     if messages.len() < 2 {
         return true;
