@@ -17,13 +17,13 @@ jobs:
         include:
           - os: windows-latest
             target: x86_64-pc-windows-msvc
-            bin: lyco-windows-x86_64.exe
+            ext: .exe
           - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
-            bin: lyco-linux-x86_64
+            ext: ""
           - os: macos-latest
             target: aarch64-apple-darwin
-            bin: lyco-macos-arm64
+            ext: ""
 
     steps:
       - uses: actions/checkout@v4
@@ -35,33 +35,63 @@ jobs:
       - name: Build release
         run: cargo build --release --target ${{ matrix.target }}
 
-      - name: Rename binary
+      - name: Prepare artifacts
         shell: bash
         run: |
+          BIN_NAME="lyco${{ matrix.ext }}"
+          SRC="target/${{ matrix.target }}/release/${BIN_NAME}"
+          TAG="${{ github.ref_name }}"
+          # Strip 'v' prefix for version
+          VERSION="${TAG#v}"
+          ARCHIVE="lyco-${VERSION}-${{ matrix.target }}"
+
+          mkdir -p dist
+
+          RELEASE_DIR="target/${{ matrix.target }}/release"
+
           if [[ "${{ runner.os }}" == "Windows" ]]; then
-            cp target/${{ matrix.target }}/release/lyco.exe "${{ matrix.bin }}"
+            # Raw binary
+            cp "$SRC" "dist/lyco-${{ matrix.target }}${{ matrix.ext }}"
+            # Zip archive (cargo-binstall)
+            (cd "$RELEASE_DIR" && 7z a "../../../dist/${ARCHIVE}.zip" "$BIN_NAME")
+            # WiX MSI
+            choco install wixtoolset -y --no-progress 2>&1 | tail -3 || true
+            WIX_DIR="/c/Program Files (x86)/WiX Toolset v5.0/bin"
+            if [[ -d "$WIX_DIR" ]]; then
+              export PATH="$PATH:$WIX_DIR"
+              cd wix
+              sed -i "s/Version=\".*\"/Version=\"${VERSION}\"/" install.wxs
+              candle.exe install.wxs -arch x64 -out install.wixobj
+              light.exe install.wixobj -out "../dist/lyco-${VERSION}-x86_64.msi"
+              cd ..
+              echo "MSI created"
+            else
+              echo "WiX not found, skipping MSI"
+            fi
           else
-            cp target/${{ matrix.target }}/release/lyco "${{ matrix.bin }}"
+            # Linux / macOS
+            cp "$SRC" "dist/lyco-${{ matrix.target }}"
+            (cd "$RELEASE_DIR" && tar czf "../../../dist/${ARCHIVE}.tar.gz" "$BIN_NAME")
           fi
 
       - name: Check dynamic deps
         shell: bash
         run: |
-          echo "=== Binary: ${{ matrix.bin }} ==="
-          file "${{ matrix.bin }}" || true
+          echo "=== Dynamic Dependencies ==="
+          BIN="target/${{ matrix.target }}/release/lyco${{ matrix.ext }}"
           if [[ "${{ runner.os }}" == "Linux" ]]; then
-            ldd "${{ matrix.bin }}"
+            ldd "$BIN"
           elif [[ "${{ runner.os }}" == "macOS" ]]; then
-            otool -L "${{ matrix.bin }}"
+            otool -L "$BIN"
           elif [[ "${{ runner.os }}" == "Windows" ]]; then
-            dumpbin /dependents "${{ matrix.bin }}" 2>/dev/null | grep -i ".dll" || true
+            dumpbin /dependents "$BIN" 2>/dev/null | grep -i ".dll" || true
           fi
 
-      - name: Upload artifact
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.bin }}
-          path: ${{ matrix.bin }}
+          name: lyco-${{ matrix.target }}
+          path: dist/*
 
   release:
     name: Create Release
@@ -77,7 +107,7 @@ jobs:
           path: dist
 
       - name: List artifacts
-        run: ls -la dist/
+        run: ls -lh dist/
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
