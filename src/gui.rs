@@ -57,6 +57,18 @@ impl App {
         }
     }
 
+    fn try_connect(&mut self, ip: &str) {
+        match connect(ip, 4242) {
+            Ok(stream) => {
+                self.peers.insert(ip.to_string(), stream);
+                self.status_text = format!("Connected to {}", ip);
+            }
+            Err(e) => {
+                self.status_text = format!("Connect {} failed: {}", ip, e);
+            }
+        }
+    }
+
     fn send_message(&mut self) {
         let payload = self.pending_msg.trim().to_string();
         if payload.is_empty() {
@@ -204,25 +216,19 @@ impl App {
         ui.heading("Scan Results");
         ui.add_space(4.0);
 
+        let mut to_connect: Vec<String> = Vec::new();
+
         for result in self.scan_results.iter() {
             match result {
                 ScanResult::HostAlive { ip, .. } => {
                     ui.horizontal(|ui| {
                         ui.colored_label(Color32::GREEN, "OK");
                         ui.label(ip);
-                        if !self.peers.contains_key(ip) {
-                            if ui.button("Connect").clicked() {
-                                match connect(ip, 4242) {
-                                    Ok(stream) => {
-                                        self.peers.insert(ip.clone(), stream);
-                                        self.status_text = format!("Connected to {}", ip);
-                                    }
-                                    Err(e) => {
-                                        self.status_text = format!("Connect {} failed: {}", ip, e);
-                                    }
-                                }
-                            }
-                        } else {
+                        if !self.peers.contains_key(ip)
+                            && ui.button("Connect").clicked()
+                        {
+                            to_connect.push(ip.clone());
+                        } else if self.peers.contains_key(ip) {
                             ui.label("(connected)");
                         }
                     });
@@ -231,6 +237,12 @@ impl App {
                     ui.horizontal(|ui| {
                         ui.colored_label(Color32::YELLOW, "OPEN");
                         ui.label(format!("{}:{} ({})", ip, port, service));
+                        if *port == 4242
+                            && !self.peers.contains_key(ip)
+                            && ui.button("Connect").clicked()
+                        {
+                            to_connect.push(ip.clone());
+                        }
                     });
                 }
                 ScanResult::SshSuccess { ip } => {
@@ -246,6 +258,10 @@ impl App {
                     });
                 }
             }
+        }
+
+        for ip in to_connect {
+            self.try_connect(&ip);
         }
     }
 

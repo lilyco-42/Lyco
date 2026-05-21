@@ -155,7 +155,23 @@ pub fn start_scan(config: ScanConfig) -> (mpsc::Receiver<ScanResult>, StopHandle
                 }
             };
 
-            for ip in &chunk {
+            // Create one shared ping client for the entire chunk
+            let ping_client = if config.ping_enabled {
+                match surge_ping::Client::new(&surge_ping::Config::default()) {
+                    Ok(c) => Some(c),
+                    Err(e) => {
+                        let _ = tx.send(ScanResult::ScanError {
+                            ip: "N/A".into(),
+                            error: format!("ping client: {}", e),
+                        });
+                        return;
+                    }
+                }
+            } else {
+                None
+            };
+
+            for (idx, ip) in chunk.iter().enumerate() {
                 if stop.is_stopped() {
                     break;
                 }
@@ -163,8 +179,8 @@ pub fn start_scan(config: ScanConfig) -> (mpsc::Receiver<ScanResult>, StopHandle
                 let ip_str = ip.to_string();
                 let mut alive = false;
 
-                if config.ping_enabled {
-                    match rt.block_on(ping_host(*ip)) {
+                if let Some(ref client) = ping_client {
+                    match rt.block_on(ping_one(client, *ip, idx as u16)) {
                         Ok(true) => {
                             alive = true;
                             let _ = tx.send(ScanResult::HostAlive {
@@ -234,12 +250,14 @@ pub fn start_scan(config: ScanConfig) -> (mpsc::Receiver<ScanResult>, StopHandle
     (rx, stop_clone)
 }
 
-async fn ping_host(ip: Ipv4Addr) -> Result<bool, String> {
-    use surge_ping::{Client, Config as PingConfig, PingIdentifier, PingSequence, SurgeError};
+async fn ping_one(
+    client: &surge_ping::Client,
+    ip: Ipv4Addr,
+    id: u16,
+) -> Result<bool, String> {
+    use surge_ping::{PingIdentifier, PingSequence, SurgeError};
 
-    let client = Client::new(&PingConfig::default())
-        .map_err(|e| format!("ping client: {}", e))?;
-    let mut pinger = client.pinger(std::net::IpAddr::V4(ip), PingIdentifier(1)).await;
+    let mut pinger = client.pinger(std::net::IpAddr::V4(ip), PingIdentifier(id)).await;
     pinger.timeout(Duration::from_secs(2));
     let payload = [0u8; 8];
 
