@@ -155,9 +155,11 @@ pub fn start_scan(config: ScanConfig) -> (mpsc::Receiver<ScanResult>, StopHandle
                 }
             };
 
-            // Create one shared ping client for the entire chunk
+            // Create one shared ping client inside the tokio runtime
             let ping_client = if config.ping_enabled {
-                match surge_ping::Client::new(&surge_ping::Config::default()) {
+                match rt.block_on(async {
+                    surge_ping::Client::new(&surge_ping::Config::default())
+                }) {
                     Ok(c) => Some(c),
                     Err(e) => {
                         let _ = tx.send(ScanResult::ScanError {
