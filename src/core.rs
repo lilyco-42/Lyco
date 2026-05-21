@@ -54,6 +54,31 @@ pub fn parse_cidr(cidr: &str) -> Result<Vec<Ipv4Addr>, String> {
     Ok(ips)
 }
 
+/// Auto-detect the local network CIDR (e.g. "192.168.10.0/24")
+/// by inspecting non-loopback IPv4 interfaces with a netmask.
+pub fn auto_detect_cidr() -> Option<String> {
+    let interfaces = getifaddrs::getifaddrs().ok()?;
+    for iface in interfaces {
+        if iface.flags.contains(getifaddrs::InterfaceFlags::LOOPBACK) {
+            continue;
+        }
+        if let (Some(ip), Some(netmask)) = (iface.address.ip_addr(), iface.address.netmask()) {
+            if let (std::net::IpAddr::V4(ipv4), std::net::IpAddr::V4(mask)) = (ip, netmask) {
+                let prefix = netmask_to_prefix(mask);
+                let ip_u32 = u32::from(ipv4);
+                let mask_u32 = u32::from(mask);
+                let network = Ipv4Addr::from(ip_u32 & mask_u32);
+                return Some(format!("{}/{}", network, prefix));
+            }
+        }
+    }
+    None
+}
+
+fn netmask_to_prefix(mask: Ipv4Addr) -> u8 {
+    u32::from(mask).count_ones() as u8
+}
+
 // ── Scan Types ─────────────────────────────────────────────────────
 
 #[derive(Debug, Clone)]
@@ -82,7 +107,7 @@ pub struct ScanConfig {
 impl Default for ScanConfig {
     fn default() -> Self {
         Self {
-            cidr: "192.168.1.0/24".into(),
+            cidr: auto_detect_cidr().unwrap_or_else(|| "192.168.1.0/24".into()),
             ping_enabled: true,
             ports_enabled: false,
             ports: vec![22, 80, 443, 3389],

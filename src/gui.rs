@@ -376,7 +376,11 @@ pub fn run() -> Result<(), String> {
                 rooms: HashMap::new(),
                 current_room: "default".into(),
                 pending_msg: String::new(),
-                status_text: format!("P2P server started on port {}", bound_port),
+                status_text: format!(
+                    "P2P :{} | Network: {}",
+                    bound_port,
+                    crate::core::auto_detect_cidr().unwrap_or_else(|| "unknown".into())
+                ),
             };
             Ok(Box::new(app))
         }),

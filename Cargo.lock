@@ -1240,6 +1240,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "getifaddrs"
+version = "0.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a42c13dcc0ad1c180689ee935eb88a5545b734cadee1a200785873154e3142dd"
+dependencies = [
+ "bitflags 2.11.1",
+ "libc",
+ "windows-sys 0.59.0",
+]
+
+[[package]]
 name = "getrandom"
 version = "0.3.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1822,6 +1833,7 @@ version = "0.1.0"
 dependencies = [
  "eframe",
  "egui",
+ "getifaddrs",
  "serde",
  "serde_json",
  "sha2",
