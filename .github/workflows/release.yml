@@ -17,13 +17,13 @@ jobs:
         include:
           - os: windows-latest
             target: x86_64-pc-windows-msvc
-            artifact: lyco.exe
+            bin: lyco-windows-x86_64.exe
           - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
-            artifact: lyco
+            bin: lyco-linux-x86_64
           - os: macos-latest
             target: aarch64-apple-darwin
-            artifact: lyco
+            bin: lyco-macos-arm64
 
     steps:
       - uses: actions/checkout@v4
@@ -35,28 +35,33 @@ jobs:
       - name: Build release
         run: cargo build --release --target ${{ matrix.target }}
 
+      - name: Rename binary
+        shell: bash
+        run: |
+          if [[ "${{ runner.os }}" == "Windows" ]]; then
+            cp target/${{ matrix.target }}/release/lyco.exe "${{ matrix.bin }}"
+          else
+            cp target/${{ matrix.target }}/release/lyco "${{ matrix.bin }}"
+          fi
+
       - name: Check dynamic deps
         shell: bash
         run: |
-          BIN="target/${{ matrix.target }}/release/${{ matrix.artifact }}"
-          echo "=== Binary: $BIN ==="
-          file "$BIN" || true
+          echo "=== Binary: ${{ matrix.bin }} ==="
+          file "${{ matrix.bin }}" || true
           if [[ "${{ runner.os }}" == "Linux" ]]; then
-            echo "--- ldd ---"
-            ldd "$BIN" || true
+            ldd "${{ matrix.bin }}"
           elif [[ "${{ runner.os }}" == "macOS" ]]; then
-            echo "--- otool -L ---"
-            otool -L "$BIN" || true
+            otool -L "${{ matrix.bin }}"
           elif [[ "${{ runner.os }}" == "Windows" ]]; then
-            echo "--- dumpbin ---"
-            dumpbin /dependents "$BIN" 2>/dev/null | grep -i ".dll" || true
+            dumpbin /dependents "${{ matrix.bin }}" 2>/dev/null | grep -i ".dll" || true
           fi
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: lyco-${{ matrix.target }}
-          path: target/${{ matrix.target }}/release/${{ matrix.artifact }}
+          name: ${{ matrix.bin }}
+          path: ${{ matrix.bin }}
 
   release:
     name: Create Release
@@ -69,20 +74,10 @@ jobs:
         with:
           pattern: lyco-*
           merge-multiple: true
-          path: artifacts
+          path: dist
 
-      - name: Rename artifacts
-        run: |
-          mkdir -p dist
-          ls -R artifacts/
-          for d in artifacts/*/; do
-            for f in "$d"*; do
-              cp "$f" dist/
-            done
-          done
-          mv dist/lyco.exe dist/lyco-windows-x86_64.exe 2>/dev/null || true
-          mv dist/lyco dist/lyco-linux-x86_64 2>/dev/null || true
-          ls dist/
+      - name: List artifacts
+        run: ls -la dist/
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
