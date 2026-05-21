@@ -60,9 +60,11 @@ pub fn parse_cidr(cidr: &str) -> Result<Vec<Ipv4Addr>, String> {
 #[allow(dead_code)]
 pub enum ScanResult {
     HostAlive { ip: String, #[allow(dead_code)] hostname: Option<String> },
+    HostDown { ip: String },
     PortOpen { ip: String, port: u16, service: String },
     SshSuccess { ip: String },
     ScanError { ip: String, error: String },
+    ScanDone,
 }
 
 #[derive(Clone)]
@@ -119,7 +121,7 @@ pub enum ScanStatus {
 
 // ── Scan Engine ────────────────────────────────────────────────────
 
-pub fn start_scan(config: ScanConfig) -> (mpsc::Receiver<ScanResult>, StopHandle) {
+pub fn start_scan(config: ScanConfig) -> (mpsc::Receiver<ScanResult>, StopHandle, usize) {
     let (tx, rx) = mpsc::channel();
     let stop = StopHandle::new();
     let stop_clone = stop.clone();
@@ -128,9 +130,11 @@ pub fn start_scan(config: ScanConfig) -> (mpsc::Receiver<ScanResult>, StopHandle
         Ok(ips) => ips,
         Err(e) => {
             let _ = tx.send(ScanResult::ScanError { ip: "N/A".into(), error: e });
-            return (rx, stop);
+            return (rx, stop, 0);
         }
     };
+
+    let total = ips.len();
 
     let chunk_size = ips.len().div_ceil(config.thread_count);
     let chunks: Vec<Vec<Ipv4Addr>> = ips
@@ -190,7 +194,9 @@ pub fn start_scan(config: ScanConfig) -> (mpsc::Receiver<ScanResult>, StopHandle
                                 hostname: None,
                             });
                         }
-                        Ok(false) => {}
+                        Ok(false) => {
+                            let _ = tx.send(ScanResult::HostDown { ip: ip_str.clone() });
+                        }
                         Err(e) => {
                             let _ = tx.send(ScanResult::ScanError {
                                 ip: ip_str.clone(),
@@ -246,10 +252,12 @@ pub fn start_scan(config: ScanConfig) -> (mpsc::Receiver<ScanResult>, StopHandle
                     }
                 }
             }
+            // Signal this worker is done
+            let _ = tx.send(ScanResult::ScanDone);
         });
     }
 
-    (rx, stop_clone)
+    (rx, stop_clone, total)
 }
 
 async fn ping_one(

@@ -15,6 +15,8 @@ struct App {
     scan_stop: Option<StopHandle>,
     scan_results: Vec<ScanResult>,
     scan_status: ScanStatus,
+    scan_total: usize,
+    scan_received: usize,
 
     p2p_port: u16,
     server_receiver: Option<mpsc::Receiver<(P2pStream, String)>>,
@@ -30,10 +32,35 @@ struct App {
 
 impl App {
     fn drain_scan_results(&mut self) {
+        let mut done = false;
         if let Some(ref rx) = self.scan_receiver {
-            while let Ok(result) = rx.try_recv() {
-                self.scan_results.push(result);
+            loop {
+                match rx.try_recv() {
+                    Ok(ScanResult::ScanDone) => {
+                        self.scan_received += 1;
+                        let thread_count = self.scan_config.thread_count.min(self.scan_total);
+                        if self.scan_received >= thread_count {
+                            done = true;
+                        }
+                    }
+                    Ok(result) => {
+                        self.scan_results.push(result);
+                    }
+                    Err(mpsc::TryRecvError::Empty) => break,
+                    Err(mpsc::TryRecvError::Disconnected) => {
+                        done = true;
+                        break;
+                    }
+                }
             }
+        }
+        if done && matches!(self.scan_status, ScanStatus::Running) {
+            self.scan_status = ScanStatus::Done;
+            let alive = self.scan_results.iter().filter(|r| matches!(r, ScanResult::HostAlive { .. })).count();
+            self.status_text = format!(
+                "Scan done. {} IPs scanned, {} hosts alive, {} results shown",
+                self.scan_total, alive, self.scan_results.len()
+            );
         }
     }
 
@@ -110,11 +137,13 @@ impl eframe::App for App {
 
                 if ui.button("Start Scan").clicked() && !is_running {
                     self.scan_results.clear();
-                    let (rx, stop) = start_scan(self.scan_config.clone());
+                    let (rx, stop, total) = start_scan(self.scan_config.clone());
                     self.scan_receiver = Some(rx);
                     self.scan_stop = Some(stop);
+                    self.scan_total = total;
+                    self.scan_received = 0;
                     self.scan_status = ScanStatus::Running;
-                    self.status_text = "Scanning...".into();
+                    self.status_text = format!("Scanning {} IPs...", total);
                 }
 
                 if ui.button("Stop").clicked() && is_running {
@@ -152,9 +181,15 @@ impl eframe::App for App {
 
         egui::Panel::bottom("status").show_inside(ui, |ui| {
             let peer_count = self.peers.len();
+            let progress = if matches!(self.scan_status, ScanStatus::Running) {
+                let result_count = self.scan_results.len();
+                format!(" | Progress: {}/{} results", result_count, self.scan_total)
+            } else {
+                String::new()
+            };
             ui.label(format!(
-                "P2P 0.0.0.0:{} | Peers: {} | SHA: OK | {}",
-                self.p2p_port, peer_count, self.status_text
+                "P2P 0.0.0.0:{} | Peers: {} | SHA: OK | {}{}",
+                self.p2p_port, peer_count, self.status_text, progress
             ));
         });
     }
@@ -257,6 +292,13 @@ impl App {
                         ui.label(format!("{} {}", ip, error));
                     });
                 }
+                ScanResult::HostDown { ip } => {
+                    ui.horizontal(|ui| {
+                        ui.colored_label(Color32::GRAY, "DOWN");
+                        ui.label(ip);
+                    });
+                }
+                ScanResult::ScanDone => {}
             }
         }
 
@@ -325,6 +367,8 @@ pub fn run() -> Result<(), String> {
                 scan_stop: None,
                 scan_results: Vec::new(),
                 scan_status: ScanStatus::Idle,
+                scan_total: 0,
+                scan_received: 0,
                 p2p_port: bound_port,
                 server_receiver: Some(rx),
                 server_stop: Some(stop),
