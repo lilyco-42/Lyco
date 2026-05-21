@@ -1,8 +1,8 @@
 use std::collections::HashMap;
-use std::sync::mpsc;
+use std::sync::{mpsc, Arc};
 
 use eframe::egui;
-use egui::Color32;
+use egui::{Color32, FontData, FontDefinitions, FontFamily};
 use rust_i18n::t;
 
 use crate::core::{
@@ -357,7 +357,25 @@ pub fn run() -> Result<(), String> {
     eframe::run_native(
         "lyco",
         options,
-        Box::new(|_cc| {
+        Box::new(|cc| {
+            // Install CJK font
+            let mut fonts = FontDefinitions::default();
+            fonts.font_data.insert(
+                "simhei".to_owned(),
+                Arc::new(FontData::from_static(include_bytes!("../assets/simhei.ttf"))),
+            );
+            fonts
+                .families
+                .get_mut(&FontFamily::Proportional)
+                .unwrap()
+                .insert(0, "simhei".to_owned());
+            fonts
+                .families
+                .get_mut(&FontFamily::Monospace)
+                .unwrap()
+                .push("simhei".to_owned());
+            cc.egui_ctx.set_fonts(fonts);
+
             let (bound_port, rx, stop) = start_server(4242);
             let app = App {
                 scan_config: ScanConfig::default(),
