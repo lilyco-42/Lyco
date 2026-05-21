@@ -3,6 +3,7 @@ use std::sync::mpsc;
 
 use eframe::egui;
 use egui::Color32;
+use rust_i18n::t;
 
 use crate::core::{
     connect, start_scan, start_server, Message, P2pStream, ScanConfig, ScanResult, ScanStatus,
@@ -57,17 +58,14 @@ impl App {
         if done && matches!(self.scan_status, ScanStatus::Running) {
             self.scan_status = ScanStatus::Done;
             let alive = self.scan_results.iter().filter(|r| matches!(r, ScanResult::HostAlive { .. })).count();
-            self.status_text = format!(
-                "Scan done. {} IPs scanned, {} hosts alive, {} results shown",
-                self.scan_total, alive, self.scan_results.len()
-            );
+            self.status_text = t!("status.scan_done", total => self.scan_total, alive => alive).to_string();
         }
     }
 
     fn drain_p2p_connections(&mut self) {
         if let Some(ref rx) = self.server_receiver {
             while let Ok((stream, ip)) = rx.try_recv() {
-                self.status_text = format!("New connection from {}", ip);
+                self.status_text = t!("status.new_connection", ip => ip.as_str()).to_string();
                 self.peers.insert(ip.clone(), stream);
             }
         }
@@ -88,10 +86,10 @@ impl App {
         match connect(ip, 4242) {
             Ok(stream) => {
                 self.peers.insert(ip.to_string(), stream);
-                self.status_text = format!("Connected to {}", ip);
+                self.status_text = t!("status.connected_to", ip => ip).to_string();
             }
             Err(e) => {
-                self.status_text = format!("Connect {} failed: {}", ip, e);
+                self.status_text = t!("status.connect_failed", ip => ip, error => e.as_str()).to_string();
             }
         }
     }
@@ -108,7 +106,7 @@ impl App {
             match peer.send(&room, &payload) {
                 Ok(_) => {}
                 Err(e) => {
-                    self.status_text = format!("Send error: {}", e);
+                    self.status_text = t!("status.send_error", error => e.as_str()).to_string();
                 }
             }
         }
@@ -135,7 +133,7 @@ impl eframe::App for App {
             egui::MenuBar::new().ui(ui, |ui| {
                 let is_running = matches!(self.scan_status, ScanStatus::Running);
 
-                if ui.button("Start Scan").clicked() && !is_running {
+                if ui.button(t!("menu.start_scan")).clicked() && !is_running {
                     self.scan_results.clear();
                     let (rx, stop, total) = start_scan(self.scan_config.clone());
                     self.scan_receiver = Some(rx);
@@ -143,23 +141,23 @@ impl eframe::App for App {
                     self.scan_total = total;
                     self.scan_received = 0;
                     self.scan_status = ScanStatus::Running;
-                    self.status_text = format!("Scanning {} IPs...", total);
+                    self.status_text = t!("status.scanning", total => total).to_string();
                 }
 
-                if ui.button("Stop").clicked() && is_running {
+                if ui.button(t!("menu.stop")).clicked() && is_running {
                     if let Some(ref stop) = self.scan_stop {
                         stop.stop();
                     }
                     self.scan_status = ScanStatus::Done;
-                    self.status_text = "Scan stopped".into();
+                    self.status_text = t!("status.scan_stopped").to_string();
                 }
 
                 ui.separator();
 
                 match self.scan_status {
-                    ScanStatus::Idle => { ui.label("Idle"); }
-                    ScanStatus::Running => { ui.label("Scanning..."); }
-                    ScanStatus::Done => { ui.label("Scan done"); }
+                    ScanStatus::Idle => { ui.label(t!("menu.idle")); }
+                    ScanStatus::Running => { ui.label(t!("menu.scanning")); }
+                    ScanStatus::Done => { ui.label(t!("menu.scan_done")); }
                 }
             });
         });
@@ -182,8 +180,7 @@ impl eframe::App for App {
         egui::Panel::bottom("status").show_inside(ui, |ui| {
             let peer_count = self.peers.len();
             let progress = if matches!(self.scan_status, ScanStatus::Running) {
-                let result_count = self.scan_results.len();
-                format!(" | Progress: {}/{} results", result_count, self.scan_total)
+                t!("status.scan_progress", results => self.scan_results.len(), total => self.scan_total).to_string()
             } else {
                 String::new()
             };
@@ -197,20 +194,20 @@ impl eframe::App for App {
 
 impl App {
     fn render_config(&mut self, ui: &mut egui::Ui) {
-        ui.heading("Scan Config");
+        ui.heading(t!("config.heading"));
         ui.add_space(4.0);
 
         ui.horizontal(|ui| {
-            ui.label("CIDR:");
+            ui.label(t!("config.cidr"));
             ui.text_edit_singleline(&mut self.scan_config.cidr);
         });
 
-        ui.checkbox(&mut self.scan_config.ping_enabled, "Ping sweep");
-        ui.checkbox(&mut self.scan_config.ports_enabled, "Port scan");
+        ui.checkbox(&mut self.scan_config.ping_enabled, t!("config.ping"));
+        ui.checkbox(&mut self.scan_config.ports_enabled, t!("config.port_scan"));
 
         if self.scan_config.ports_enabled {
             ui.horizontal(|ui| {
-                ui.label("Ports:");
+                ui.label(t!("config.ports"));
                 let mut ports_str = self
                     .scan_config
                     .ports
@@ -227,14 +224,14 @@ impl App {
             });
         }
 
-        ui.checkbox(&mut self.scan_config.ssh_enabled, "SSH verify");
+        ui.checkbox(&mut self.scan_config.ssh_enabled, t!("config.ssh"));
         if self.scan_config.ssh_enabled {
             ui.horizontal(|ui| {
-                ui.label("User:");
+                ui.label(t!("config.user"));
                 ui.text_edit_singleline(&mut self.scan_config.ssh_user);
             });
             ui.horizontal(|ui| {
-                ui.label("Pass:");
+                ui.label(t!("config.pass"));
                 ui.add(
                     egui::TextEdit::singleline(&mut self.scan_config.ssh_pass).password(true),
                 );
@@ -242,13 +239,13 @@ impl App {
         }
 
         ui.horizontal(|ui| {
-            ui.label("Threads:");
+            ui.label(t!("config.threads"));
             ui.add(egui::Slider::new(&mut self.scan_config.thread_count, 1..=256));
         });
     }
 
     fn render_scan_results(&mut self, ui: &mut egui::Ui) {
-        ui.heading("Scan Results");
+        ui.heading(t!("results.heading"));
         ui.add_space(4.0);
 
         let mut to_connect: Vec<String> = Vec::new();
@@ -257,24 +254,24 @@ impl App {
             match result {
                 ScanResult::HostAlive { ip, .. } => {
                     ui.horizontal(|ui| {
-                        ui.colored_label(Color32::GREEN, "OK");
+                        ui.colored_label(Color32::GREEN, t!("results.alive"));
                         ui.label(ip);
                         if !self.peers.contains_key(ip)
-                            && ui.button("Connect").clicked()
+                            && ui.button(t!("results.connect")).clicked()
                         {
                             to_connect.push(ip.clone());
                         } else if self.peers.contains_key(ip) {
-                            ui.label("(connected)");
+                            ui.label(t!("results.connected"));
                         }
                     });
                 }
                 ScanResult::PortOpen { ip, port, service } => {
                     ui.horizontal(|ui| {
-                        ui.colored_label(Color32::YELLOW, "OPEN");
+                        ui.colored_label(Color32::YELLOW, t!("results.open"));
                         ui.label(format!("{}:{} ({})", ip, port, service));
                         if *port == 4242
                             && !self.peers.contains_key(ip)
-                            && ui.button("Connect").clicked()
+                            && ui.button(t!("results.connect")).clicked()
                         {
                             to_connect.push(ip.clone());
                         }
@@ -282,19 +279,19 @@ impl App {
                 }
                 ScanResult::SshSuccess { ip } => {
                     ui.horizontal(|ui| {
-                        ui.colored_label(Color32::GREEN, "SSH");
-                        ui.label(format!("{} SSH login OK", ip));
+                        ui.colored_label(Color32::GREEN, t!("results.ssh_ok"));
+                        ui.label(t!("results.ssh_login_ok", ip => ip.as_str()));
                     });
                 }
                 ScanResult::ScanError { ip, error } => {
                     ui.horizontal(|ui| {
-                        ui.colored_label(Color32::RED, "ERR");
+                        ui.colored_label(Color32::RED, t!("results.error"));
                         ui.label(format!("{} {}", ip, error));
                     });
                 }
                 ScanResult::HostDown { ip } => {
                     ui.horizontal(|ui| {
-                        ui.colored_label(Color32::GRAY, "DOWN");
+                        ui.colored_label(Color32::GRAY, t!("results.down"));
                         ui.label(ip);
                     });
                 }
@@ -309,16 +306,17 @@ impl App {
 
     fn render_chat(&mut self, ui: &mut egui::Ui) {
         ui.horizontal(|ui| {
-            ui.heading("Chat");
+            ui.heading(t!("chat.heading"));
             ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-                ui.label("Room:");
+                ui.label(t!("chat.room"));
                 ui.text_edit_singleline(&mut self.current_room);
             });
         });
 
         if !self.peers.is_empty() {
             ui.label(format!(
-                "Online: {}",
+                "{} {}",
+                t!("chat.online"),
                 self.peers.keys().map(|s| s.as_str()).collect::<Vec<_>>().join(", ")
             ));
         }
@@ -341,7 +339,7 @@ impl App {
             if resp.lost_focus() && ui.input(|i| i.key_pressed(egui::Key::Enter)) {
                 self.send_message();
             }
-            if ui.button("Send").clicked() {
+            if ui.button(t!("chat.send")).clicked() {
                 self.send_message();
             }
         });
@@ -376,11 +374,11 @@ pub fn run() -> Result<(), String> {
                 rooms: HashMap::new(),
                 current_room: "default".into(),
                 pending_msg: String::new(),
-                status_text: format!(
-                    "P2P :{} | Network: {}",
-                    bound_port,
-                    crate::core::auto_detect_cidr().unwrap_or_else(|| "unknown".into())
-                ),
+                status_text: t!(
+                    "status.p2p_started",
+                    port => bound_port,
+                    network => crate::core::auto_detect_cidr().unwrap_or_else(|| "unknown".into())
+                ).to_string(),
             };
             Ok(Box::new(app))
         }),
