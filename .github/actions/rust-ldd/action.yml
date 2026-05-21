@@ -1,0 +1,34 @@
+name: rust-ldd
+description: Check dynamic library dependencies of a Rust binary
+
+inputs:
+  binary:
+    description: Path to the binary to check
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Check dynamic dependencies (Windows)
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        Write-Host "=== Dynamic Dependencies ==="
+        dumpbin /dependents "${{ inputs.binary }}" 2>$null | Select-String -Pattern "\.dll" | ForEach-Object { Write-Host "  $_" }
+        Write-Host "=== Done ==="
+
+    - name: Check dynamic dependencies (Linux)
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        echo "=== Dynamic Dependencies ==="
+        ldd "${{ inputs.binary }}" || true
+        echo "=== Done ==="
+
+    - name: Check dynamic dependencies (macOS)
+      if: runner.os == 'macOS'
+      shell: bash
+      run: |
+        echo "=== Dynamic Dependencies ==="
+        otool -L "${{ inputs.binary }}" || true
+        echo "=== Done ==="

@@ -1,0 +1,72 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    name: Build (${{ matrix.target }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            artifact: lyco.exe
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            artifact: lyco
+          - os: macos-latest
+            target: x86_64-apple-darwin
+            artifact: lyco
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          target: ${{ matrix.target }}
+
+      - name: Build release
+        run: cargo build --release --target ${{ matrix.target }}
+
+      - name: Check dynamic libs (rust-lld)
+        uses: ./.github/actions/rust-lld
+        with:
+          binary: target/${{ matrix.target }}/release/${{ matrix.artifact }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: lyco-${{ matrix.target }}
+          path: target/${{ matrix.target }}/release/${{ matrix.artifact }}
+
+  release:
+    name: Create Release
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: lyco-*
+          merge-multiple: true
+          path: artifacts
+
+      - name: Rename artifacts
+        run: |
+          mkdir dist
+          mv artifacts/lyco-x86_64-pc-windows-msvc/lyco.exe dist/lyco-windows-x86_64.exe
+          mv artifacts/lyco-x86_64-unknown-linux-gnu/lyco dist/lyco-linux-x86_64
+          mv artifacts/lyco-x86_64-apple-darwin/lyco dist/lyco-macos-x86_64
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          generate_release_notes: true
