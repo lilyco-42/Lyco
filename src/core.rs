@@ -1,14 +1,14 @@
+use std::io::{BufRead, BufReader, Write as IoWrite};
 use std::net::Ipv4Addr;
-use std::sync::mpsc;
+use std::net::{TcpListener, TcpStream, ToSocketAddrs};
 use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::mpsc;
 use std::sync::Arc;
 use std::thread;
 use std::time::Duration;
-use std::net::{TcpStream, TcpListener, ToSocketAddrs};
-use std::io::{BufRead, BufReader, Write as IoWrite};
 
-use serde::{Serialize, Deserialize};
-use sha2::{Sha256, Digest};
+use serde::{Deserialize, Serialize};
+use sha2::{Digest, Sha256};
 
 // ── CIDR Parser ────────────────────────────────────────────────────
 
@@ -84,11 +84,23 @@ fn netmask_to_prefix(mask: Ipv4Addr) -> u8 {
 #[derive(Debug, Clone)]
 #[allow(dead_code)]
 pub enum ScanResult {
-    HostAlive { ip: String, #[allow(dead_code)] hostname: Option<String> },
-    HostDown { ip: String },
-    PortOpen { ip: String, port: u16, service: String },
-    SshSuccess { ip: String },
-    ScanError { ip: String, error: String },
+    HostAlive {
+        ip: String,
+        #[allow(dead_code)]
+        hostname: Option<String>,
+    },
+    HostDown {
+        ip: String,
+    },
+    PortOpen {
+        ip: String,
+        port: u16,
+        service: String,
+    },
+    ScanError {
+        ip: String,
+        error: String,
+    },
     ScanDone,
 }
 
@@ -98,9 +110,6 @@ pub struct ScanConfig {
     pub ping_enabled: bool,
     pub ports_enabled: bool,
     pub ports: Vec<u16>,
-    pub ssh_enabled: bool,
-    pub ssh_user: String,
-    pub ssh_pass: String,
     pub thread_count: usize,
 }
 
@@ -111,9 +120,6 @@ impl Default for ScanConfig {
             ping_enabled: true,
             ports_enabled: false,
             ports: vec![22, 80, 443, 3389],
-            ssh_enabled: false,
-            ssh_user: "root".into(),
-            ssh_pass: String::new(),
             thread_count: 16,
         }
     }
@@ -126,7 +132,9 @@ pub struct StopHandle {
 
 impl StopHandle {
     pub fn new() -> Self {
-        Self { flag: Arc::new(AtomicBool::new(false)) }
+        Self {
+            flag: Arc::new(AtomicBool::new(false)),
+        }
     }
 
     pub fn stop(&self) {
@@ -154,7 +162,10 @@ pub fn start_scan(config: ScanConfig) -> (mpsc::Receiver<ScanResult>, StopHandle
     let ips = match parse_cidr(&config.cidr) {
         Ok(ips) => ips,
         Err(e) => {
-            let _ = tx.send(ScanResult::ScanError { ip: "N/A".into(), error: e });
+            let _ = tx.send(ScanResult::ScanError {
+                ip: "N/A".into(),
+                error: e,
+            });
             return (rx, stop, 0);
         }
     };
@@ -162,10 +173,7 @@ pub fn start_scan(config: ScanConfig) -> (mpsc::Receiver<ScanResult>, StopHandle
     let total = ips.len();
 
     let chunk_size = ips.len().div_ceil(config.thread_count);
-    let chunks: Vec<Vec<Ipv4Addr>> = ips
-        .chunks(chunk_size.max(1))
-        .map(|c| c.to_vec())
-        .collect();
+    let chunks: Vec<Vec<Ipv4Addr>> = ips.chunks(chunk_size.max(1)).map(|c| c.to_vec()).collect();
 
     for chunk in chunks {
         let tx = tx.clone();
@@ -186,9 +194,8 @@ pub fn start_scan(config: ScanConfig) -> (mpsc::Receiver<ScanResult>, StopHandle
 
             // Create one shared ping client inside the tokio runtime
             let ping_client = if config.ping_enabled {
-                match rt.block_on(async {
-                    surge_ping::Client::new(&surge_ping::Config::default())
-                }) {
+                match rt.block_on(async { surge_ping::Client::new(&surge_ping::Config::default()) })
+                {
                     Ok(c) => Some(c),
                     Err(e) => {
                         let _ = tx.send(ScanResult::ScanError {
@@ -257,25 +264,6 @@ pub fn start_scan(config: ScanConfig) -> (mpsc::Receiver<ScanResult>, StopHandle
                         }
                     }
                 }
-
-                if stop.is_stopped() {
-                    break;
-                }
-
-                if config.ssh_enabled && should_scan {
-                    match try_ssh_login(&ip_str, &config.ssh_user, &config.ssh_pass) {
-                        Ok(true) => {
-                            let _ = tx.send(ScanResult::SshSuccess { ip: ip_str.clone() });
-                        }
-                        Ok(false) => {}
-                        Err(e) => {
-                            let _ = tx.send(ScanResult::ScanError {
-                                ip: ip_str.clone(),
-                                error: e,
-                            });
-                        }
-                    }
-                }
             }
             // Signal this worker is done
             let _ = tx.send(ScanResult::ScanDone);
@@ -285,14 +273,12 @@ pub fn start_scan(config: ScanConfig) -> (mpsc::Receiver<ScanResult>, StopHandle
     (rx, stop_clone, total)
 }
 
-async fn ping_one(
-    client: &surge_ping::Client,
-    ip: Ipv4Addr,
-    id: u16,
-) -> Result<bool, String> {
+async fn ping_one(client: &surge_ping::Client, ip: Ipv4Addr, id: u16) -> Result<bool, String> {
     use surge_ping::{PingIdentifier, PingSequence, SurgeError};
 
-    let mut pinger = client.pinger(std::net::IpAddr::V4(ip), PingIdentifier(id)).await;
+    let mut pinger = client
+        .pinger(std::net::IpAddr::V4(ip), PingIdentifier(id))
+        .await;
     pinger.timeout(Duration::from_secs(2));
     let payload = [0u8; 8];
 
@@ -313,35 +299,6 @@ fn check_port(ip: &str, port: u16) -> bool {
         Err(_) => return false,
     };
     TcpStream::connect_timeout(&sock_addr, Duration::from_secs(1)).is_ok()
-}
-
-fn try_ssh_login(ip: &str, user: &str, pass: &str) -> Result<bool, String> {
-    let addr = format!("{}:22", ip);
-    let sock_addr = addr
-        .to_socket_addrs()
-        .map_err(|e| format!("resolve {}: {}", ip, e))?
-        .next()
-        .ok_or_else(|| format!("no address for {}", ip))?;
-
-    let tcp = TcpStream::connect_timeout(&sock_addr, Duration::from_secs(3))
-        .map_err(|e| format!("connect {}:22: {}", ip, e))?;
-    tcp.set_read_timeout(Some(Duration::from_secs(3))).ok();
-
-    let mut session = ssh2::Session::new()
-        .map_err(|e| format!("ssh session: {}", e))?;
-    session.set_tcp_stream(tcp);
-    session
-        .handshake()
-        .map_err(|e| format!("ssh handshake: {}", e))?;
-
-    match session.userauth_password(user, pass) {
-        Ok(()) => Ok(true),
-        Err(e) => {
-            // Authentication failed but SSH connection worked — not an error, just not successful
-            let _ = e;
-            Ok(false)
-        }
-    }
 }
 
 // ── P2P Types ──────────────────────────────────────────────────────
@@ -415,8 +372,7 @@ impl P2pStream {
             payload: payload.to_string(),
             prev_hash: self.last_sent_hash.clone(),
         };
-        let json = serde_json::to_string(&msg)
-            .map_err(|e| format!("serialize: {}", e))?;
+        let json = serde_json::to_string(&msg).map_err(|e| format!("serialize: {}", e))?;
 
         self.last_sent_hash = {
             let mut hasher = Sha256::new();
@@ -424,11 +380,8 @@ impl P2pStream {
             format!("{:x}", hasher.finalize())
         };
 
-        writeln!(self.stream, "{}", json)
-            .map_err(|e| format!("write: {}", e))?;
-        self.stream
-            .flush()
-            .map_err(|e| format!("flush: {}", e))?;
+        writeln!(self.stream, "{}", json).map_err(|e| format!("write: {}", e))?;
+        self.stream.flush().map_err(|e| format!("flush: {}", e))?;
         Ok(self.send_count)
     }
 
@@ -442,8 +395,8 @@ impl P2pStream {
             return Err("empty message".into());
         }
 
-        let msg: Message = serde_json::from_str(&line)
-            .map_err(|e| format!("deserialize: {}", e))?;
+        let msg: Message =
+            serde_json::from_str(&line).map_err(|e| format!("deserialize: {}", e))?;
 
         let expected_prev = if self.recv_count == 0 {
             msg.prev_hash.clone()
@@ -495,20 +448,18 @@ pub fn start_server(port: u16) -> (u16, mpsc::Receiver<(P2pStream, String)>, Sto
             break;
         }
         match listener.accept() {
-            Ok((stream, addr)) => {
-                match P2pStream::new(stream) {
-                    Ok(mut p2p) => {
-                        if let Err(e) = p2p.handshake("default") {
-                            eprintln!("Handshake failed with {}: {}", addr, e);
-                            continue;
-                        }
-                        let _ = tx.send((p2p, addr.ip().to_string()));
+            Ok((stream, addr)) => match P2pStream::new(stream) {
+                Ok(mut p2p) => {
+                    if let Err(e) = p2p.handshake("default") {
+                        eprintln!("Handshake failed with {}: {}", addr, e);
+                        continue;
                     }
-                    Err(e) => {
-                        eprintln!("P2pStream error for {}: {}", addr, e);
-                    }
+                    let _ = tx.send((p2p, addr.ip().to_string()));
                 }
-            }
+                Err(e) => {
+                    eprintln!("P2pStream error for {}: {}", addr, e);
+                }
+            },
             Err(ref e) if e.kind() == std::io::ErrorKind::WouldBlock => {
                 thread::sleep(Duration::from_millis(100));
             }
@@ -595,19 +546,28 @@ mod tests {
     #[test]
     fn test_verify_chain_valid() {
         let m1 = Message {
-            msg_id: 1, room: "r".into(), payload: "p1".into(), prev_hash: "genesis".into(),
+            msg_id: 1,
+            room: "r".into(),
+            payload: "p1".into(),
+            prev_hash: "genesis".into(),
         };
         let m1_json = serde_json::to_string(&m1).unwrap();
         let m1_hash = format!("{:x}", sha2::Sha256::digest(m1_json.as_bytes()));
 
         let m2 = Message {
-            msg_id: 2, room: "r".into(), payload: "p2".into(), prev_hash: m1_hash,
+            msg_id: 2,
+            room: "r".into(),
+            payload: "p2".into(),
+            prev_hash: m1_hash,
         };
         let m2_json = serde_json::to_string(&m2).unwrap();
         let m2_hash = format!("{:x}", sha2::Sha256::digest(m2_json.as_bytes()));
 
         let m3 = Message {
-            msg_id: 3, room: "r".into(), payload: "p3".into(), prev_hash: m2_hash,
+            msg_id: 3,
+            room: "r".into(),
+            payload: "p3".into(),
+            prev_hash: m2_hash,
         };
 
         assert!(verify_chain(&[m1, m2, m3]));
@@ -616,16 +576,25 @@ mod tests {
     #[test]
     fn test_verify_chain_tampered() {
         let m1 = Message {
-            msg_id: 1, room: "r".into(), payload: "hello".into(), prev_hash: "genesis".into(),
+            msg_id: 1,
+            room: "r".into(),
+            payload: "hello".into(),
+            prev_hash: "genesis".into(),
         };
         let m1_json = serde_json::to_string(&m1).unwrap();
         let m1_hash = format!("{:x}", sha2::Sha256::digest(m1_json.as_bytes()));
 
         let m2 = Message {
-            msg_id: 2, room: "r".into(), payload: "world".into(), prev_hash: m1_hash,
+            msg_id: 2,
+            room: "r".into(),
+            payload: "world".into(),
+            prev_hash: m1_hash,
         };
         let m3 = Message {
-            msg_id: 3, room: "r".into(), payload: "tampered".into(), prev_hash: "wrong_hash".into(),
+            msg_id: 3,
+            room: "r".into(),
+            payload: "tampered".into(),
+            prev_hash: "wrong_hash".into(),
         };
 
         assert!(!verify_chain(&[m1, m2, m3]));

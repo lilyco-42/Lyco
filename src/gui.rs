@@ -57,8 +57,13 @@ impl App {
         }
         if done && matches!(self.scan_status, ScanStatus::Running) {
             self.scan_status = ScanStatus::Done;
-            let alive = self.scan_results.iter().filter(|r| matches!(r, ScanResult::HostAlive { .. })).count();
-            self.status_text = t!("status.scan_done", total => self.scan_total, alive => alive).to_string();
+            let alive = self
+                .scan_results
+                .iter()
+                .filter(|r| matches!(r, ScanResult::HostAlive { .. }))
+                .count();
+            self.status_text =
+                t!("status.scan_done", total => self.scan_total, alive => alive).to_string();
         }
     }
 
@@ -74,10 +79,7 @@ impl App {
     fn drain_peer_messages(&mut self) {
         for (_ip, peer) in self.peers.iter_mut() {
             while let Ok(msg) = peer.recv() {
-                self.rooms
-                    .entry(msg.room.clone())
-                    .or_default()
-                    .push(msg);
+                self.rooms.entry(msg.room.clone()).or_default().push(msg);
             }
         }
     }
@@ -89,7 +91,8 @@ impl App {
                 self.status_text = t!("status.connected_to", ip => ip).to_string();
             }
             Err(e) => {
-                self.status_text = t!("status.connect_failed", ip => ip, error => e.as_str()).to_string();
+                self.status_text =
+                    t!("status.connect_failed", ip => ip, error => e.as_str()).to_string();
             }
         }
     }
@@ -155,9 +158,15 @@ impl eframe::App for App {
                 ui.separator();
 
                 match self.scan_status {
-                    ScanStatus::Idle => { ui.label(t!("menu.idle")); }
-                    ScanStatus::Running => { ui.label(t!("menu.scanning")); }
-                    ScanStatus::Done => { ui.label(t!("menu.scan_done")); }
+                    ScanStatus::Idle => {
+                        ui.label(t!("menu.idle"));
+                    }
+                    ScanStatus::Running => {
+                        ui.label(t!("menu.scanning"));
+                    }
+                    ScanStatus::Done => {
+                        ui.label(t!("menu.scan_done"));
+                    }
                 }
             });
         });
@@ -224,23 +233,12 @@ impl App {
             });
         }
 
-        ui.checkbox(&mut self.scan_config.ssh_enabled, t!("config.ssh"));
-        if self.scan_config.ssh_enabled {
-            ui.horizontal(|ui| {
-                ui.label(t!("config.user"));
-                ui.text_edit_singleline(&mut self.scan_config.ssh_user);
-            });
-            ui.horizontal(|ui| {
-                ui.label(t!("config.pass"));
-                ui.add(
-                    egui::TextEdit::singleline(&mut self.scan_config.ssh_pass).password(true),
-                );
-            });
-        }
-
         ui.horizontal(|ui| {
             ui.label(t!("config.threads"));
-            ui.add(egui::Slider::new(&mut self.scan_config.thread_count, 1..=256));
+            ui.add(egui::Slider::new(
+                &mut self.scan_config.thread_count,
+                1..=256,
+            ));
         });
     }
 
@@ -277,12 +275,6 @@ impl App {
                         }
                     });
                 }
-                ScanResult::SshSuccess { ip } => {
-                    ui.horizontal(|ui| {
-                        ui.colored_label(Color32::GREEN, t!("results.ssh_ok"));
-                        ui.label(t!("results.ssh_login_ok", ip => ip.as_str()));
-                    });
-                }
                 ScanResult::ScanError { ip, error } => {
                     ui.horizontal(|ui| {
                         ui.colored_label(Color32::RED, t!("results.error"));
@@ -317,7 +309,11 @@ impl App {
             ui.label(format!(
                 "{} {}",
                 t!("chat.online"),
-                self.peers.keys().map(|s| s.as_str()).collect::<Vec<_>>().join(", ")
+                self.peers
+                    .keys()
+                    .map(|s| s.as_str())
+                    .collect::<Vec<_>>()
+                    .join(", ")
             ));
         }
 
@@ -362,7 +358,9 @@ pub fn run() -> Result<(), String> {
             let mut fonts = FontDefinitions::default();
             fonts.font_data.insert(
                 "simhei".to_owned(),
-                Arc::new(FontData::from_static(include_bytes!("../assets/simhei.ttf"))),
+                Arc::new(FontData::from_static(include_bytes!(
+                    "../assets/simhei.ttf"
+                ))),
             );
             fonts
                 .families
@@ -396,7 +394,8 @@ pub fn run() -> Result<(), String> {
                     "status.p2p_started",
                     port => bound_port,
                     network => crate::core::auto_detect_cidr().unwrap_or_else(|| "unknown".into())
-                ).to_string(),
+                )
+                .to_string(),
             };
             Ok(Box::new(app))
         }),
