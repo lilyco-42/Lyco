@@ -2,99 +2,101 @@ name: Release
 
 on:
   push:
-    tags: ["v*"]
-
-env:
-  CARGO_TERM_COLOR: always
+    tags:
+      - "v*"
 
 jobs:
   build:
-    name: Build (${{ matrix.target }})
-    runs-on: ${{ matrix.os }}
     strategy:
-      fail-fast: false
       matrix:
         include:
-          - os: windows-latest
-            target: x86_64-pc-windows-msvc
-            ext: .exe
           - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
-            ext: ""
+            archive: tar.gz
+            apt_packages: libgtk-3-dev libxcb-render0-dev libxcb-shape0-dev libxcb-xfixes0-dev libxkbcommon-dev libatk1.0-dev libcairo2-dev
           - os: macos-latest
             target: aarch64-apple-darwin
-            ext: ""
+            archive: tar.gz
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            archive: zip
+
+    runs-on: ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - uses: dtolnay/rust-toolchain@v1
         with:
-          target: ${{ matrix.target }}
+          toolchain: stable
+          targets: ${{ matrix.target }}
 
-      - name: Build release
+      - name: Install system deps (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ${{ matrix.apt_packages }}
+
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-${{ matrix.target }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Build
         run: cargo build --release --target ${{ matrix.target }}
 
-      - name: Prepare artifacts
-        shell: bash
+      - name: Package (tar.gz)
+        if: matrix.archive == 'tar.gz'
         run: |
-          BIN_NAME="lyco${{ matrix.ext }}"
-          SRC="target/${{ matrix.target }}/release/${BIN_NAME}"
-          TAG="${{ github.ref_name }}"
-          # Strip 'v' prefix for version
-          VERSION="${TAG#v}"
-          ARCHIVE="lyco-${VERSION}-${{ matrix.target }}"
+          cd target/${{ matrix.target }}/release
+          tar czf ../../../lyco-${{ matrix.target }}.tar.gz lyco
+          cd ../../..
+          sha256sum lyco-${{ matrix.target }}.tar.gz > lyco-${{ matrix.target }}.tar.gz.sha256
 
-          mkdir -p dist
-
-          RELEASE_DIR="target/${{ matrix.target }}/release"
-
-          if [[ "${{ runner.os }}" == "Windows" ]]; then
-            # Raw binary
-            cp "$SRC" "dist/lyco-${{ matrix.target }}${{ matrix.ext }}"
-            # Zip archive (cargo-binstall)
-            (cd "$RELEASE_DIR" && 7z a "../../../dist/${ARCHIVE}.zip" "$BIN_NAME")
-            # WiX MSI
-            choco install wixtoolset -y --no-progress 2>&1 | tail -3 || true
-            WIX_DIR="/c/Program Files (x86)/WiX Toolset v5.0/bin"
-            if [[ -d "$WIX_DIR" ]]; then
-              export PATH="$PATH:$WIX_DIR"
-              cd wix
-              sed -i "s/Version=\".*\"/Version=\"${VERSION}\"/" install.wxs
-              candle.exe install.wxs -arch x64 -out install.wixobj
-              light.exe install.wixobj -out "../dist/lyco-${VERSION}-x86_64.msi"
-              cd ..
-              echo "MSI created"
-            else
-              echo "WiX not found, skipping MSI"
-            fi
-          else
-            # Linux / macOS
-            cp "$SRC" "dist/lyco-${{ matrix.target }}"
-            (cd "$RELEASE_DIR" && tar czf "../../../dist/${ARCHIVE}.tar.gz" "$BIN_NAME")
-          fi
-
-      - name: Check dynamic deps
-        shell: bash
+      - name: Package (zip + exe)
+        if: matrix.archive == 'zip'
+        shell: pwsh
         run: |
-          echo "=== Dynamic Dependencies ==="
-          BIN="target/${{ matrix.target }}/release/lyco${{ matrix.ext }}"
-          if [[ "${{ runner.os }}" == "Linux" ]]; then
-            ldd "$BIN"
-          elif [[ "${{ runner.os }}" == "macOS" ]]; then
-            otool -L "$BIN"
-          elif [[ "${{ runner.os }}" == "Windows" ]]; then
-            dumpbin /dependents "$BIN" 2>/dev/null | grep -i ".dll" || true
-          fi
+          $bin = "target/${{ matrix.target }}/release/lyco.exe"
+          $archive = "lyco-${{ matrix.target }}.zip"
+          Compress-Archive -Path $bin -DestinationPath $archive
+          $hash = (Get-FileHash $archive -Algorithm SHA256).Hash.ToLower()
+          "$hash  $archive" | Out-File -Encoding ASCII "$archive.sha256"
+          Copy-Item $bin "lyco-${{ matrix.target }}.exe"
+          $hash = (Get-FileHash "lyco-${{ matrix.target }}.exe" -Algorithm SHA256).Hash.ToLower()
+          "$hash  lyco-${{ matrix.target }}.exe" | Out-File -Encoding ASCII "lyco-${{ matrix.target }}.exe.sha256"
 
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+      - name: Build MSI installer
+        if: matrix.archive == 'zip'
+        run: |
+          choco install wixtoolset -y --version=3.14.1 --allow-downgrade
+          $wixBin = "${env:ProgramFiles(x86)}\WiX Toolset v3.14\bin"
+          if (-not (Test-Path "$wixBin\candle.exe")) {
+            $wixBin = "${env:ProgramFiles(x86)}\WiX Toolset v3.11\bin"
+          }
+          $version = "${{ github.ref_name }}" -replace '^v', ''
+          $binary = "target/${{ matrix.target }}/release/lyco.exe"
+          & "$wixBin\candle.exe" -d"Version=$version" -d"Binary=$binary" wix\main.wxs -out wix\
+          & "$wixBin\light.exe" wix\main.wixobj -out "lyco-${{ matrix.target }}.msi"
+          $hash = (Get-FileHash "lyco-${{ matrix.target }}.msi" -Algorithm SHA256).Hash.ToLower()
+          "$hash  lyco-${{ matrix.target }}.msi" | Out-File -Encoding ASCII "lyco-${{ matrix.target }}.msi.sha256"
+        shell: pwsh
+
+      - uses: actions/upload-artifact@v4
         with:
           name: lyco-${{ matrix.target }}
-          path: dist/*
+          path: |
+            lyco-${{ matrix.target }}.${{ matrix.archive }}
+            lyco-${{ matrix.target }}.${{ matrix.archive }}.sha256
+            lyco-${{ matrix.target }}.exe
+            lyco-${{ matrix.target }}.exe.sha256
+            lyco-${{ matrix.target }}.msi
+            lyco-${{ matrix.target }}.msi.sha256
 
   release:
-    name: Create Release
     needs: build
     runs-on: ubuntu-latest
     permissions:
@@ -102,15 +104,15 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          pattern: lyco-*
+          path: artifacts
           merge-multiple: true
-          path: dist
 
-      - name: List artifacts
-        run: ls -lh dist/
+      - name: Display artifacts
+        run: ls -laR artifacts
 
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
+      - uses: softprops/action-gh-release@v2
         with:
-          files: dist/*
+          files: artifacts/**/*
           generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

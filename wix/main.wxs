@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Product
+        Id="*"
+        Name="lyco"
+        Language="1033"
+        Version="$(var.Version)"
+        Manufacturer="lilyco-42"
+        UpgradeCode="B1A2C3D4-E5F6-7890-ABCD-EF1234567890">
+
+        <Package
+            InstallerVersion="200"
+            Compressed="yes"
+            InstallScope="perMachine"
+            Platform="x64" />
+
+        <MajorUpgrade DowngradeErrorMessage="A newer version of lyco is already installed." />
+
+        <MediaTemplate EmbedCab="yes" />
+
+        <Directory Id="TARGETDIR" Name="SourceDir">
+            <Directory Id="ProgramFiles64Folder">
+                <Directory Id="APPLICATIONFOLDER" Name="lyco">
+                    <Component Id="LycoExe" Guid="*" Win64="yes">
+                        <File
+                            Id="lyco.exe"
+                            Name="lyco.exe"
+                            Source="$(var.Binary)"
+                            KeyPath="yes" />
+                    </Component>
+                </Directory>
+            </Directory>
+        </Directory>
+
+        <Feature Id="Main" Title="lyco" Level="1">
+            <ComponentRef Id="LycoExe" />
+        </Feature>
+    </Product>
+</Wix>
