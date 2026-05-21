@@ -2,6 +2,8 @@
 
 LAN IP scanner + P2P messenger — discover hosts, connect peers, chat with verified message chains.
 
+[中文](README_zh-CN.md) | [日本語](README_ja.md) | [한국어](README_ko.md) | [Русский](README_ru.md)
+
 ## Features
 
 - **LAN Scan** — ping sweep, TCP port scan, auto-detect local subnet
